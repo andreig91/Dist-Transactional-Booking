@@ -1,0 +1,28 @@
+MIDDLEWARE:
+
+	rmiregistry 1866 &
+	rm -rf /home/2010/ageorg22/comp512/servercodes/ResImpl/*.class
+	export CLASSPATH=$HOME/comp512/servercode:/home/2010/ageorg22/comp512/servercode/ResInterface.jar
+	javac $HOME/comp512/servercode/ResImpl/ResourceManagerImpl.java
+	java -Djava.rmi.server.codebase=file:$HOME/comp512/servercode/ -Djava.security.policy=file:$HOME/comp512/servercode/java.policy ResImpl.ResourceManagerImpl middle 1866 willy rm 1866 skinner rm 1866 ubuntu rm 1866
+
+
+
+DISTRIBUTED RM:
+
+	rmiregistry 1866 &
+	rm -rf /home/2010/ageorg22/comp512/rm/ResImpl/*.class
+	export CLASSPATH=$HOME/comp512/rm
+	javac $HOME/comp512/rm/ResImpl/ResourceManagerImpl.java
+	java -Djava.rmi.server.codebase=file:$HOME/comp512/rm/ -Djava.security.policy=file:$HOME/comp512/rm/java.policy ResImpl.ResourceManagerImpl rm 1866
+
+
+
+CLIENT:
+
+	export CLASSPATH=$HOME/comp512/clientsrc:/home/2010/ageorg22/comp512/clientsrc/ResInterface.jar
+	rm -f /home/2010/ageorg22/comp512/clientsrc/client.class	
+	javac $HOME/comp512/clientsrc/client.java
+	java -Djava.security.policy=file:$HOME/comp512/clientsrc/java.policy client mimi middle 1866
+
+
