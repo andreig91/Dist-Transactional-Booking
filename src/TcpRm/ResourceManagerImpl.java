@@ -4,7 +4,6 @@ import java.io.ObjectInputStream;
 import java.io.PrintStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Enumeration;
@@ -243,7 +242,7 @@ public class ResourceManagerImpl extends Thread implements ResourceManager
 	// Create a new flight, or add seats to existing flight
 	//  NOTE: if flightPrice <= 0 and the flight already exists, it maintains its current price
 	public boolean addFlight(int id, int flightNum, int flightSeats, int flightPrice)
-			{
+			throws IOException{
 		Trace.info("RM::addFlight(" + id + ", " + flightNum + ", $" + flightPrice + ", " + flightSeats + ") called" );
 		Flight curObj = (Flight) readData( id, Flight.getKey(flightNum) );
 		if( curObj == null ) {
@@ -267,8 +266,7 @@ public class ResourceManagerImpl extends Thread implements ResourceManager
 
 
 	public boolean deleteFlight(int id, int flightNum)
-			throws RemoteException
-			{
+			throws IOException{
 		return deleteItem(id, Flight.getKey(flightNum));
 			}
 
@@ -277,8 +275,7 @@ public class ResourceManagerImpl extends Thread implements ResourceManager
 	// Create a new room location or add rooms to an existing location
 	//  NOTE: if price <= 0 and the room location already exists, it maintains its current price
 	public boolean addRooms(int id, String location, int count, int price)
-			throws RemoteException
-			{
+			throws IOException{
 		Trace.info("RM::addRooms(" + id + ", " + location + ", " + count + ", $" + price + ") called" );
 		Hotel curObj = (Hotel) readData( id, Hotel.getKey(location) );
 		if( curObj == null ) {
@@ -300,7 +297,6 @@ public class ResourceManagerImpl extends Thread implements ResourceManager
 
 	// Delete rooms from a location
 	public boolean deleteRooms(int id, String location)
-			throws RemoteException
 			{
 		return deleteItem(id, Hotel.getKey(location));
 
@@ -309,7 +305,7 @@ public class ResourceManagerImpl extends Thread implements ResourceManager
 	// Create a new car location or add cars to an existing location
 	//  NOTE: if price <= 0 and the location already exists, it maintains its current price
 	public boolean addCars(int id, String location, int count, int price)
-			{
+			throws IOException{
 		Trace.info("RM::addCars(" + id + ", " + location + ", " + count + ", $" + price + ") called" );
 		Car curObj = (Car) readData( id, Car.getKey(location) );
 		if( curObj == null ) {
@@ -332,8 +328,7 @@ public class ResourceManagerImpl extends Thread implements ResourceManager
 
 	// Delete cars from a location
 	public boolean deleteCars(int id, String location)
-			throws RemoteException
-			{
+			throws IOException{
 		return deleteItem(id, Car.getKey(location));
 			}
 
@@ -341,23 +336,20 @@ public class ResourceManagerImpl extends Thread implements ResourceManager
 
 	// Returns the number of empty seats on this flight
 	public int queryFlight(int id, int flightNum)
-			throws RemoteException
-			{
+			throws IOException{
 		return queryNum(id, Flight.getKey(flightNum));
 			}
 
 	// Returns price of this flight
 	public int queryFlightPrice(int id, int flightNum )
-			throws RemoteException
-			{
+			throws IOException{
 		return queryPrice(id, Flight.getKey(flightNum));
 			}
 
 
 	// Returns the number of rooms available at a location
 	public int queryRooms(int id, String location)
-			throws RemoteException
-			{
+			throws IOException{
 		return queryNum(id, Hotel.getKey(location));
 			}
 
@@ -366,24 +358,21 @@ public class ResourceManagerImpl extends Thread implements ResourceManager
 
 	// Returns room price at this location
 	public int queryRoomsPrice(int id, String location)
-			throws RemoteException
-			{
+			throws IOException{
 		return queryPrice(id, Hotel.getKey(location));
 			}
 
 
 	// Returns the number of cars available at a location
 	public int queryCars(int id, String location)
-			throws RemoteException
-			{
+			throws IOException{
 		return queryNum(id, Car.getKey(location));
 			}
 
 
 	// Returns price of cars at this location
 	public int queryCarsPrice(int id, String location)
-			throws RemoteException
-			{
+			throws IOException{
 		return queryPrice(id, Car.getKey(location));
 			}
 
@@ -391,8 +380,7 @@ public class ResourceManagerImpl extends Thread implements ResourceManager
 	//  customer doesn't exist. Returns empty RMHashtable if customer exists but has no
 	//  reservations.
 	public RMHashtable getCustomerReservations(int id, int customerID)
-			throws RemoteException
-			{
+			throws IOException{
 		Trace.info("RM::getCustomerReservations(" + id + ", " + customerID + ") called" );
 		Customer cust = (Customer) readData( id, Customer.getKey(customerID) );
 		if( cust == null ) {
@@ -405,8 +393,7 @@ public class ResourceManagerImpl extends Thread implements ResourceManager
 
 	// return a bill
 	public String queryCustomerInfo(int id, int customerID)
-			throws RemoteException
-			{
+			throws IOException{
 		Trace.info("RM::queryCustomerInfo(" + id + ", " + customerID + ") called" );
 		Customer cust = (Customer) readData( id, Customer.getKey(customerID) );
 		if( cust == null ) {
@@ -424,8 +411,7 @@ public class ResourceManagerImpl extends Thread implements ResourceManager
 	// new customer just returns a unique customer identifier
 
 	public int newCustomer(int id)
-			throws RemoteException
-			{
+			throws IOException{
 		Trace.info("INFO: RM::newCustomer(" + id + ") called" );
 		// Generate a globally unique ID for the new customer
 		int cid = Integer.parseInt( String.valueOf(id) +
@@ -439,8 +425,7 @@ public class ResourceManagerImpl extends Thread implements ResourceManager
 
 	// I opted to pass in customerID instead. This makes testing easier
 	public boolean newCustomer(int id, int customerID )
-			throws RemoteException
-			{
+			throws IOException{
 		Trace.info("INFO: RM::newCustomer(" + id + ", " + customerID + ") called" );
 		Customer cust = (Customer) readData( id, Customer.getKey(customerID) );
 		if( cust == null ) {
@@ -456,8 +441,7 @@ public class ResourceManagerImpl extends Thread implements ResourceManager
 
 	//
 	public boolean removeReservation(int id, String key, int count )
-			throws RemoteException
-			{
+			throws IOException{
 		Trace.info("RM::removeReservation(" + id + ", " + key + ", " + count + ") called" );
 		ReservableItem item  = (ReservableItem) readData(id, key);
 		//Trace.info("RM::deleteCustomer(" + id + ", " + customerID + ") has reserved " + reserveditem.getKey() + "which is reserved" +  item.getReserved() +  " times and is still available " + item.getCount() + " times"  );
@@ -473,8 +457,7 @@ public class ResourceManagerImpl extends Thread implements ResourceManager
 
 	// Deletes customer from the database. 
 	public boolean deleteCustomer(int id, int customerID)
-			throws RemoteException
-			{
+			throws IOException{
 		Trace.info("RM::deleteCustomer(" + id + ", " + customerID + ") called" );
 		Customer cust = (Customer) readData( id, Customer.getKey(customerID) );
 		if( cust == null ) {
@@ -506,7 +489,7 @@ public class ResourceManagerImpl extends Thread implements ResourceManager
 
 	// Adds car reservation to this customer. 
 	public boolean reserveCar(int id, int customerID, String location)
-			throws RemoteException
+			throws IOException
 			{
 		//return reserveItem(id, customerID, Car.getKey(location), location);
 		return true;
@@ -515,14 +498,14 @@ public class ResourceManagerImpl extends Thread implements ResourceManager
 
 	// Adds room reservation to this customer. 
 	public boolean reserveRoom(int id, int customerID, String location)
-			throws RemoteException
+			throws IOException
 			{
 		//return reserveItem(id, customerID, Hotel.getKey(location), location);
 		return true;
 			}
 	// Adds flight reservation to this customer.  
 	public boolean reserveFlight(int id, int customerID, int flightNum)
-			throws RemoteException
+			throws IOException
 			{
 		//return reserveItem(id, customerID, Flight.getKey(flightNum), String.valueOf(flightNum));
 		return true;
@@ -530,7 +513,7 @@ public class ResourceManagerImpl extends Thread implements ResourceManager
 
 	/* reserve an itinerary */
 	public boolean itinerary(int id,int customer,Vector flightNumbers,String location,boolean Car,boolean Room)
-			throws RemoteException {
+			throws IOException {
 		return false;
 	}
 	public boolean reflector(ArrayList<Object> array, DataOutputStream os) throws IOException
