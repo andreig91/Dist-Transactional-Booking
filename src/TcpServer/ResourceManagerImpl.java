@@ -282,6 +282,7 @@ public class ResourceManagerImpl extends Thread implements ResourceManager
 	public boolean deleteFlight(int id, int flightNum)
 	throws IOException
 	{
+		Trace.info("RM::deleteFlight(" + id + ", " + flightNum + ") called on middleware" );
 		array = new ArrayList<Object>();
 		String method = "deleteFlight";
 		array.add(method);

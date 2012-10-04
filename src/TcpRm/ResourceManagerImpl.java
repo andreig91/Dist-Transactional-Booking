@@ -549,67 +549,67 @@ public class ResourceManagerImpl extends Thread implements ResourceManager
 			os.writeBoolean(ret);
 			return true;
 		}
-		else if(((String) argument[0]).equals("deleteflight"))
+		else if(((String) argument[0]).equals("deleteFlight"))
 		{
 			boolean ret = deleteFlight(((Integer) argument[1]).intValue(),((Integer) argument[2]).intValue());
 			os.writeBoolean(ret);
 			return true;
 		}
-		else if(((String) argument[0]).equals("deletecar"))
+		else if(((String) argument[0]).equals("deleteCar"))
 		{
 			boolean ret = deleteCars(((Integer) argument[1]).intValue(),((String) argument[2]).toString());
 			os.writeBoolean(ret);
 			return true;
 		}
-		else if(((String) argument[0]).equals("deleteroom"))
+		else if(((String) argument[0]).equals("deleteRoom"))
 		{
 			boolean ret = deleteRooms(((Integer) argument[1]).intValue(),((String) argument[2]).toString());
 			os.writeBoolean(ret);
 			return true;
 		}
-		else if(((String) argument[0]).equals("deletecustomer"))
+		else if(((String) argument[0]).equals("deleteCustomer"))
 		{
 			boolean ret = deleteCustomer(((Integer) argument[1]).intValue(),((Integer) argument[2]).intValue());
 			os.writeBoolean(ret);
 			return true;
 		}
-		else if(((String) argument[0]).equals("queryflight"))
+		else if(((String) argument[0]).equals("queryFlight"))
 		{
 			int ret = queryFlight(((Integer) argument[1]).intValue(),((Integer) argument[2]).intValue());
 			os.writeInt(ret);
 			return true;
 		}
-		else if(((String) argument[0]).equals("querycar"))
+		else if(((String) argument[0]).equals("queryCar"))
 		{
 			int ret = queryCars(((Integer) argument[1]).intValue(),((String) argument[2]).toString());
 			os.writeInt(ret);
 			return true;
 		}
-		else if(((String) argument[0]).equals("queryroom"))
+		else if(((String) argument[0]).equals("queryRoom"))
 		{
 			int ret = queryRooms(((Integer) argument[1]).intValue(),((String) argument[2]).toString());
 			os.writeInt(ret);
 			return true;
 		}
-		else if(((String) argument[0]).equals("querycustomer"))
+		else if(((String) argument[0]).equals("queryCustomer"))
 		{
 			String ret = queryCustomerInfo(((Integer) argument[1]).intValue(),((Integer) argument[2]).intValue());
 			os.writeBytes(ret);
 			return true;
 		}
-		else if(((String) argument[0]).equals("queryflightprice"))
+		else if(((String) argument[0]).equals("queryFlightPrice"))
 		{
 			int ret = queryFlightPrice(((Integer) argument[1]).intValue(),((Integer) argument[2]).intValue());
 			os.writeInt(ret);
 			return true;
 		}
-		else if(((String) argument[0]).equals("querycarprice"))
+		else if(((String) argument[0]).equals("queryCarPrice"))
 		{
 			int ret = queryCarsPrice(((Integer) argument[1]).intValue(),((String) argument[2]).toString());
 			os.writeInt(ret);
 			return true;
 		}
-		else if(((String) argument[0]).equals("queryroomprice"))
+		else if(((String) argument[0]).equals("queryRoomPrice"))
 		{
 			int ret = queryRoomsPrice(((Integer) argument[1]).intValue(),((String) argument[2]).toString());
 			os.writeInt(ret);
@@ -621,13 +621,13 @@ public class ResourceManagerImpl extends Thread implements ResourceManager
 			os.writeInt(ret);
 			return true;
 		}
-		else if(((String) argument[0]).equals("reservecar"))
+		else if(((String) argument[0]).equals("reserveCar"))
 		{
 			boolean ret = reserveCar(((Integer) argument[1]).intValue(),((Integer) argument[2]).intValue(),((String) argument[3]).toString());
 			os.writeBoolean(ret);
 			return true;
 		}
-		else if(((String) argument[0]).equals("reserveroom"))
+		else if(((String) argument[0]).equals("reserveRoom"))
 		{
 			boolean ret = reserveCar(((Integer) argument[1]).intValue(),((Integer) argument[2]).intValue(),((String) argument[3]).toString());
 			os.writeBoolean(ret);
