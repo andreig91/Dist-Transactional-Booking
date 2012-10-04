@@ -1,3 +1,4 @@
+
 // -------------------------------
 // adapated from Kevin T. Manley
 // CSE 593
@@ -5,6 +6,9 @@
 
 import java.util.*;
 import java.rmi.*;
+import java.rmi.registry.Registry;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.RemoteException;
 import java.io.*;
 import java.net.Socket;
 import java.net.ServerSocket;
@@ -15,26 +19,14 @@ public class server
 	static ObjectInputStream iis;
 	static PrintStream os;
 	static Socket clientSocket = null;
-	static String rmF;
-	static int rmFPort;
-	static String rmC;
-	static int rmCPort;
-	static String rmH;
-	static int rmHPort;
 
 	public static void main(String args[]) 
 	{	 
 		try 
 		{
-			if(args.length == 7)
+			if(args.length == 1)
 			{
 				serverSocket = new ServerSocket(Integer.parseInt(args[0]));
-				rmF = args[1];
-				rmFPort = Integer.parseInt(args[2]);
-				rmC = args[3];
-				rmCPort = Integer.parseInt(args[4]);
-				rmH = args[5];
-				rmHPort = Integer.parseInt(args[6]);
 			}
 			else
 			{
@@ -53,7 +45,7 @@ public class server
 			try 
 			{
 				clientSocket = serverSocket.accept();
-				new ResourceManagerImpl(clientSocket, rmF, rmFPort, rmC, rmCPort, rmH, rmHPort).start();
+				new ResourceManagerImpl(clientSocket).start();
 			}
 			catch (IOException e)
 			{
