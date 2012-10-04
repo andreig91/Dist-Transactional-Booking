@@ -309,7 +309,6 @@ public class ResourceManagerImpl extends Thread implements ResourceManager
 	// Create a new car location or add cars to an existing location
 	//  NOTE: if price <= 0 and the location already exists, it maintains its current price
 	public boolean addCars(int id, String location, int count, int price)
-			throws RemoteException
 			{
 		Trace.info("RM::addCars(" + id + ", " + location + ", " + count + ", $" + price + ") called" );
 		Car curObj = (Car) readData( id, Car.getKey(location) );
