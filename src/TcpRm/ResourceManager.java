@@ -34,8 +34,7 @@ public interface ResourceManager extends Remote
      * This should look a lot like addFlight, only keyed on a string location
      * instead of a flight number.
      */
-    public boolean addCars(int id, String location, int numCars, int price) 
-	throws RemoteException; 
+    public boolean addCars(int id, String location, int numCars, int price); 
    
     /* Add rooms to a location.  
      * This should look a lot like addFlight, only keyed on a string location
