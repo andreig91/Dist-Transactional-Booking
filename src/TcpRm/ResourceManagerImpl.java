@@ -242,33 +242,39 @@ public class ResourceManagerImpl extends Thread implements ResourceManager
 	// Create a new flight, or add seats to existing flight
 	//  NOTE: if flightPrice <= 0 and the flight already exists, it maintains its current price
 	public boolean addFlight(int id, int flightNum, int flightSeats, int flightPrice)
-			throws IOException{
+	throws IOException
+	{
 		Trace.info("RM::addFlight(" + id + ", " + flightNum + ", $" + flightPrice + ", " + flightSeats + ") called" );
 		Flight curObj = (Flight) readData( id, Flight.getKey(flightNum) );
-		if( curObj == null ) {
+		if( curObj == null )
+		{
 			// doesn't exist...add it
 			Flight newObj = new Flight( flightNum, flightSeats, flightPrice );
 			writeData( id, newObj.getKey(), newObj );
 			Trace.info("RM::addFlight(" + id + ") created new flight " + flightNum + ", seats=" +
 					flightSeats + ", price=$" + flightPrice );
-		} else {
+		} 
+		else 
+		{
 			// add seats to existing flight and update the price...
 			curObj.setCount( curObj.getCount() + flightSeats );
-			if( flightPrice > 0 ) {
+			if( flightPrice > 0 ) 
+			{
 				curObj.setPrice( flightPrice );
 			} // if
 			writeData( id, curObj.getKey(), curObj );
 			Trace.info("RM::addFlight(" + id + ") modified existing flight " + flightNum + ", seats=" + curObj.getCount() + ", price=$" + flightPrice );
 		} // else
 		return(true);
-			}
+	}
 
 
 
 	public boolean deleteFlight(int id, int flightNum)
-			throws IOException{
+	throws IOException
+	{
 		return deleteItem(id, Flight.getKey(flightNum));
-			}
+	}
 
 
 

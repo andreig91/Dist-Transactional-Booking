@@ -313,30 +313,22 @@ public class ResourceManagerImpl extends Thread implements ResourceManager
 	public boolean deleteRooms(int id, String location)
 	throws IOException
 	{
-		return true; //rmH.deleteRooms(id, location);
+		Trace.info("RM::deleteRooms(" + id + ", " + location + ") called on middleware" );
+		array = new ArrayList<Object>();
+		String method = "deleteRoom";
+		array.add(method);
+		array.add(id);
+		array.add(location);
+		hOs.writeObject(array);
+		return hIs.readBoolean();
 	}
 
 	// Create a new car location or add cars to an existing location
 	//  NOTE: if price <= 0 and the location already exists, it maintains its current price
 	public boolean addCars(int id, String location, int count, int price)
-			throws IOException
-			{
+	throws IOException
+	{
 		Trace.info("RM::addCars(" + id + ", " + location + ", " + count + ", $" + price + ") called" );
-		/*Car curObj = (Car) readData( id, Car.getKey(location) );
-			if( curObj == null ) {
-				// car location doesn't exist...add it
-				Car newObj = new Car( location, count, price );
-				writeData( id, newObj.getKey(), newObj );
-				Trace.info("RM::addCars(" + id + ") created new location " + location + ", count=" + count + ", price=$" + price );
-			} else {
-				// add count to existing car location and update price...
-				curObj.setCount( curObj.getCount() + count );
-				if( price > 0 ) {
-					curObj.setPrice( price );
-				} // if
-				writeData( id, curObj.getKey(), curObj );
-				Trace.info("RM::addCars(" + id + ") modified existing location " + location + ", count=" + curObj.getCount() + ", price=$" + price );
-			} // else*/
 		array = new ArrayList<Object>();
 		String method = "addCar";
 		array.add(method);
@@ -346,24 +338,29 @@ public class ResourceManagerImpl extends Thread implements ResourceManager
 		array.add(price);
 		cOs.writeObject(array);
 		return cIs.readBoolean();
-			}
+	}
 
 
 	// Delete cars from a location
 	public boolean deleteCars(int id, String location)
-			throws IOException
-			{
-		return true; //rmC.deleteCars(id, location);
-			}
-
-
+	throws IOException
+	{
+		Trace.info("RM::deleteCars(" + id + ", " + location + ") called on middleware" );
+		array = new ArrayList<Object>();
+		String method = "deleteCar";
+		array.add(method);
+		array.add(id);
+		array.add(location);
+		cOs.writeObject(array);
+		return cIs.readBoolean();
+	}
 
 	// Returns the number of empty seats on this flight
 	public int queryFlight(int id, int flightNum)
-			throws IOException
-			{
+	throws IOException
+	{
 		return 1; //rmF.queryFlight(id, flightNum);
-			}
+	}
 
 	// Returns the number of reservations for this flight. 
 	//		public int queryFlightReservations(int id, int flightNum)
