@@ -43,7 +43,12 @@ public class ResourceManagerImpl extends Thread implements ResourceManager
 			}
 			catch(Exception e)
 			{
-			}	
+			}
+			if(((String) array.get(0)).compareToIgnoreCase("quit") == 0)
+			{
+				System.out.println("Client disconnected");
+				break;
+			}
 			if(array != null)
 			{
 				try 
@@ -63,7 +68,6 @@ public class ResourceManagerImpl extends Thread implements ResourceManager
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				break;
 			}
 		}
 		
