@@ -269,7 +269,7 @@ public class ResourceManagerImpl extends Thread implements ResourceManager
 	// Create a new flight, or add seats to existing flight
 	//  NOTE: if flightPrice <= 0 and the flight already exists, it maintains its current price
 	public boolean addFlight(int id, int flightNum, int flightSeats, int flightPrice)
-			throws RemoteException
+			throws IOException
 			{
 		Trace.info("RM::addFlight(" + id + ", " + flightNum + ", $" + flightPrice + ", " + flightSeats + ") called on middleware" );
 		/*Flight curObj = (Flight) readData( id, Flight.getKey(flightNum) );
@@ -288,7 +288,15 @@ public class ResourceManagerImpl extends Thread implements ResourceManager
 				writeData( id, curObj.getKey(), curObj );
 				Trace.info("RM::addFlight(" + id + ") modified existing flight " + flightNum + ", seats=" + curObj.getCount() + ", price=$" + flightPrice );
 			} // else*/
-		return true; //(rmF.addFlight(id, flightNum, flightSeats, flightPrice));
+		array = new ArrayList<Object>();
+		String method = "addFlight";
+		array.add(method);
+		array.add(id);
+		array.add(flightNum);
+		array.add(flightSeats);
+		array.add(flightPrice);
+		fOs.writeObject(array);
+		return fIs.readBoolean();
 			}
 
 
@@ -479,8 +487,7 @@ public class ResourceManagerImpl extends Thread implements ResourceManager
 
 	// I opted to pass in customerID instead. This makes testing easier
 	public boolean newCustomer(int id, int customerID )
-			throws RemoteException
-			{
+	{
 		Trace.info("INFO: RM::newCustomer(" + id + ", " + customerID + ") called" );
 		Customer cust = (Customer) readData( id, Customer.getKey(customerID) );
 		if( cust == null ) {
@@ -492,7 +499,7 @@ public class ResourceManagerImpl extends Thread implements ResourceManager
 			Trace.info("INFO: RM::newCustomer(" + id + ", " + customerID + ") failed--customer already exists");
 			return false;
 		} // else
-			}
+	}
 
 
 	// Deletes customer from the database. 
@@ -651,97 +658,97 @@ public class ResourceManagerImpl extends Thread implements ResourceManager
 			os.print(ret);
 			return true;
 		}
-		else if(((String) argument[0]).equals("newcustomer"))
+		else if(((String) argument[0]).equals("newCustomer"))
 		{
 			int ret = newCustomer(((Integer) argument[1]).intValue());
 			os.print(ret);
 			return true;
 		}
-		else if (((String) argument[0]).equals("newcustomerid"))
+		else if (((String) argument[0]).equals("newCustomerId"))
 		{
 			boolean ret = newCustomer(((Integer) argument[1]).intValue(),((Integer) argument[2]).intValue());
 			os.print(ret);
 			return true;
 		}
-		else if(((String) argument[0]).equals("deleteflight"))
+		else if(((String) argument[0]).equals("deleteFlight"))
 		{
 			boolean ret = deleteFlight(((Integer) argument[1]).intValue(),((Integer) argument[2]).intValue());
 			os.print(ret);
 			return true;
 		}
-		else if(((String) argument[0]).equals("deletecar"))
+		else if(((String) argument[0]).equals("deleteCar"))
 		{
 			boolean ret = deleteCars(((Integer) argument[1]).intValue(),((String) argument[2]).toString());
 			os.print(ret);
 			return true;
 		}
-		else if(((String) argument[0]).equals("deleteroom"))
+		else if(((String) argument[0]).equals("deleteRoom"))
 		{
 			boolean ret = deleteRooms(((Integer) argument[1]).intValue(),((String) argument[2]).toString());
 			os.print(ret);
 			return true;
 		}
-		else if(((String) argument[0]).equals("deletecustomer"))
+		else if(((String) argument[0]).equals("deleteCustomer"))
 		{
 			boolean ret = deleteCustomer(((Integer) argument[1]).intValue(),((Integer) argument[2]).intValue());
 			os.print(ret);
 			return true;
 		}
-		else if(((String) argument[0]).equals("queryflight"))
+		else if(((String) argument[0]).equals("queryFlight"))
 		{
 			int ret = queryFlight(((Integer) argument[1]).intValue(),((Integer) argument[2]).intValue());
 			os.print(ret);
 			return true;
 		}
-		else if(((String) argument[0]).equals("querycar"))
+		else if(((String) argument[0]).equals("queryCar"))
 		{
 			int ret = queryCars(((Integer) argument[1]).intValue(),((String) argument[2]).toString());
 			os.print(ret);
 			return true;
 		}
-		else if(((String) argument[0]).equals("queryroom"))
+		else if(((String) argument[0]).equals("queryRoom"))
 		{
 			int ret = queryRooms(((Integer) argument[1]).intValue(),((String) argument[2]).toString());
 			os.print(ret);
 			return true;
 		}
-		else if(((String) argument[0]).equals("querycustomer"))
+		else if(((String) argument[0]).equals("queryCustomer"))
 		{
 			String ret = queryCustomerInfo(((Integer) argument[1]).intValue(),((Integer) argument[2]).intValue());
 			os.print(ret);
 			return true;
 		}
-		else if(((String) argument[0]).equals("queryflightprice"))
+		else if(((String) argument[0]).equals("queryFlightPrice"))
 		{
 			int ret = queryFlightPrice(((Integer) argument[1]).intValue(),((Integer) argument[2]).intValue());
 			os.print(ret);
 			return true;
 		}
-		else if(((String) argument[0]).equals("querycarprice"))
+		else if(((String) argument[0]).equals("queryCarPrice"))
 		{
 			int ret = queryCarsPrice(((Integer) argument[1]).intValue(),((String) argument[2]).toString());
 			os.print(ret);
 			return true;
 		}
-		else if(((String) argument[0]).equals("queryroomprice"))
+		else if(((String) argument[0]).equals("queryRoomPrice"))
 		{
 			int ret = queryRoomsPrice(((Integer) argument[1]).intValue(),((String) argument[2]).toString());
 			os.print(ret);
 			return true;
 		}
-		else if(((String) argument[0]).equals("reserveflight"))
+		else if(((String) argument[0]).equals("reserveFlight"))
 		{
 			boolean ret = reserveFlight(((Integer) argument[1]).intValue(),((Integer) argument[2]).intValue(),((Integer) argument[3]).intValue());
 			os.print(ret);
 			return true;
 		}
-		else if(((String) argument[0]).equals("reservecar"))
+		else if(((String) argument[0]).equals("reserveCar"))
 		{
 			boolean ret = reserveCar(((Integer) argument[1]).intValue(),((Integer) argument[2]).intValue(),((String) argument[3]).toString());
 			os.print(ret);
 			return true;
 		}
-		else if(((String) argument[0]).equals("reserveroom"))
+		else if(((String) argument[0]).equals("reserveRoom"))
 		{
 			boolean ret = reserveCar(((Integer) argument[1]).intValue(),((Integer) argument[2]).intValue(),((String) argument[3]).toString());
 			os.print(ret);

@@ -29,7 +29,7 @@ public interface ResourceManager extends Remote
      * @return success.
      */
     public boolean addFlight(int id, int flightNum, int flightSeats, int flightPrice) 
-	throws RemoteException; 
+	throws IOException; 
     
     /* Add cars to a location.  
      * This should look a lot like addFlight, only keyed on a string location
@@ -51,8 +51,7 @@ public interface ResourceManager extends Remote
 	throws RemoteException; 
     
     /* new customer with providing id */
-    public boolean newCustomer(int id, int cid)
-    throws RemoteException;
+    public boolean newCustomer(int id, int cid);
 
     /**
      *   Delete the entire flight.

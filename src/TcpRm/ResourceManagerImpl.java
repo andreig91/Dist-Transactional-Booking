@@ -1,5 +1,3 @@
-
-
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.PrintStream;
@@ -216,7 +214,6 @@ public class ResourceManagerImpl extends Thread implements ResourceManager
 	// Create a new flight, or add seats to existing flight
 	//  NOTE: if flightPrice <= 0 and the flight already exists, it maintains its current price
 	public boolean addFlight(int id, int flightNum, int flightSeats, int flightPrice)
-			throws RemoteException
 			{
 		Trace.info("RM::addFlight(" + id + ", " + flightNum + ", $" + flightPrice + ", " + flightSeats + ") called" );
 		Flight curObj = (Flight) readData( id, Flight.getKey(flightNum) );
