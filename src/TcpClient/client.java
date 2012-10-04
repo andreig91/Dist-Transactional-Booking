@@ -273,11 +273,8 @@ public class client
 					e.printStackTrace();
 				}
 				
-				
-				
-				
 				break;
-/*
+
 			case 7: // delete Car
 				if (arguments.size() != 3) {
 					obj.wrongNumber();
@@ -287,19 +284,36 @@ public class client
 						.println("Deleting the cars from a particular location using id: "
 								+ arguments.elementAt(1));
 				System.out.println("Car Location: " + arguments.elementAt(2));
-				try {
+				
+				
+				try 
+				{
 					Id = obj.getInt(arguments.elementAt(1));
 					location = obj.getString(arguments.elementAt(2));
-
-					if (rm.deleteCars(Id, location))
-						System.out.println("Cars Deleted");
+					
+					String method = "deleteCar";
+					ArrayList<Object> array = new ArrayList<Object>();
+					array.add(method);
+					array.add(Id);
+					array.add(location);
+					oos.writeObject(array);
+					if(is.readBoolean())
+					{
+						System.out.println("Cars deleted");
+					}
 					else
+					{
 						System.out.println("Cars could not be deleted");
-				} catch (Exception e) {
+					}
+				} 
+				catch (Exception e) 
+				{
 					System.out.println("EXCEPTION:");
 					System.out.println(e.getMessage());
 					e.printStackTrace();
 				}
+				
+				
 				break;
 
 			case 8: // delete Room
@@ -311,20 +325,39 @@ public class client
 						.println("Deleting all rooms from a particular location using id: "
 								+ arguments.elementAt(1));
 				System.out.println("Room Location: " + arguments.elementAt(2));
-				try {
+				
+				
+				try 
+				{
 					Id = obj.getInt(arguments.elementAt(1));
 					location = obj.getString(arguments.elementAt(2));
-					if (rm.deleteRooms(Id, location))
-						System.out.println("Rooms Deleted");
+					
+					String method = "deleteRoom";
+					ArrayList<Object> array = new ArrayList<Object>();
+					array.add(method);
+					array.add(Id);
+					array.add(location);
+					oos.writeObject(array);
+					if(is.readBoolean())
+					{
+						System.out.println("Rooms deleted");
+					}
 					else
+					{
 						System.out.println("Rooms could not be deleted");
-				} catch (Exception e) {
+					}
+				} 
+				catch (Exception e) 
+				{
 					System.out.println("EXCEPTION:");
 					System.out.println(e.getMessage());
 					e.printStackTrace();
 				}
+				
+				
+				
 				break;
-
+/*
 			case 9: // delete Customer
 				if (arguments.size() != 3) {
 					obj.wrongNumber();
