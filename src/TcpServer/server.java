@@ -1,61 +1,55 @@
-package TcpServer;
+// -------------------------------
+// adapated from Kevin T. Manley
+// CSE 593
+//
 
+import java.util.*;
+import java.rmi.*;
+import java.rmi.registry.Registry;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.RemoteException;
 import java.io.*;
 import java.net.Socket;
 import java.net.ServerSocket;
-import java.util.*;
 
-public class server 
+public class server
 {
-  public static void main(String args[]) 
-  {
+	static ServerSocket serverSocket = null;
+	static ObjectInputStream iis;
+	static PrintStream os;
+	static Socket clientSocket = null;
 
-    ServerSocket echoServer = null;
-    ObjectInputStream iis;
-	PrintStream os;
-    Socket clientSocket = null;
-    try 
-    {
-      if(args.length == 1)
-      {
-    	echoServer = new ServerSocket(Integer.parseInt(args[0]));
-      }
-    } 
-    catch (IOException e) 
-    {
-      System.out.println(e);
-    }
-
-    System.out.println("The server started. To stop it press <CTRL><C>.");
-    try 
-    {
-      clientSocket = echoServer.accept();
-      iis = new ObjectInputStream(clientSocket.getInputStream());
-      os = new PrintStream(clientSocket.getOutputStream());
-
-      while (true) 
-      {
-        ArrayList<Object> array = new ArrayList<Object>();
-        try
-        {
-			array = (ArrayList<Object>) iis.readObject();
-		}
-		catch(Exception e)
+	public static void main(String args[]) 
+	{	 
+		try 
 		{
-	    }	
-        if(array != null)
-        {
-			for(Object o : array)
+			if(args.length == 1)
 			{
-				System.out.println(o.toString());
+				serverSocket = new ServerSocket(Integer.parseInt(args[0]));
 			}
-        }
-      }
-    }
-    catch (IOException e)
-    {
-      System.out.println(e);
-    }
-  }
-}
+			else
+			{
+				System.out.println("Need the port number as argument");
+				System.exit(0);
+			}
+		} 
+		catch (IOException e) 
+		{
+			System.out.println(e);
+		}
+		System.out.println("The server started. To stop it press <CTRL><C>.");
 
+		while (true)
+		{
+			try 
+			{
+				clientSocket = serverSocket.accept();
+				new ResourceManagerImpl(clientSocket).start();
+			}
+			catch (IOException e)
+			{
+				System.out.println(e);
+			}	 
+		}
+	}
+}
