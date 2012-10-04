@@ -28,8 +28,7 @@ public interface ResourceManager extends Remote
      *
      * @return success.
      */
-    public boolean addFlight(int id, int flightNum, int flightSeats, int flightPrice) 
-	throws IOException; 
+    public boolean addFlight(int id, int flightNum, int flightSeats, int flightPrice) throws IOException; 
     
     /* Add cars to a location.  
      * This should look a lot like addFlight, only keyed on a string location
@@ -113,8 +112,7 @@ public interface ResourceManager extends Remote
 	throws RemoteException; 
 
     /* Reserve a seat on this flight*/
-    public boolean reserveFlight(int id, int customer, int flightNumber) 
-	throws IOException; 
+    public boolean reserveFlight(int id, int customer, int flightNumber) throws IOException; 
 
     /* reserve a car at this location */
     public boolean reserveCar(int id, int customer, String location) 

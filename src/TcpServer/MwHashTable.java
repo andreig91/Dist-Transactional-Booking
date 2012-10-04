@@ -1,4 +1,3 @@
-package TcpServer;
 
 public class MwHashTable {
  static RMHashtable m_itemHT = new RMHashtable();

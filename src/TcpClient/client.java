@@ -575,8 +575,16 @@ public class client
 				}
 				try {
 					ArrayList<Object> array = new ArrayList<Object>();
-					array.add("quit");
+					String quit = "quit";
+					array.add(quit);
 					oos.writeObject(array);
+					try{
+						Thread.sleep(1000);
+					}
+					catch(Exception e)
+					{
+						
+					}
 					is.close();
 					clientSocket.close();
 				} catch (UnknownHostException e) {

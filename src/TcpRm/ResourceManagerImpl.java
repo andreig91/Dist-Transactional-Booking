@@ -1,3 +1,4 @@
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.PrintStream;
@@ -12,10 +13,9 @@ import java.util.Vector;
 
 public class ResourceManagerImpl extends Thread implements ResourceManager
 {
-	protected RMHashtable m_itemHT = new RMHashtable();
-	static ObjectInputStream iis;
-	static PrintStream os;
-	static Socket clientSocket = null;
+	ObjectInputStream iis;
+	DataOutputStream os;
+	Socket clientSocket = null;
 
 	public ResourceManagerImpl(Socket client) 
 	{
@@ -27,7 +27,7 @@ public class ResourceManagerImpl extends Thread implements ResourceManager
 		try 
 		{
 			iis = new ObjectInputStream(clientSocket.getInputStream());
-			os = new PrintStream(clientSocket.getOutputStream());
+			os = new DataOutputStream(clientSocket.getOutputStream());
 		} 
 		catch (IOException e1) 
 		{
@@ -534,127 +534,127 @@ public class ResourceManagerImpl extends Thread implements ResourceManager
 			throws RemoteException {
 		return false;
 	}
-	public boolean reflector(ArrayList<Object> array, PrintStream os) throws IOException
+	public boolean reflector(ArrayList<Object> array, DataOutputStream os) throws IOException
 	{
 		Object[] argument = array.toArray();
 		if(((String) argument[0]).equals("addFlight"))
 		{
 			boolean ret = addFlight(((Integer) argument[1]).intValue(), ((Integer) argument[2]).intValue(), ((Integer) argument[3]).intValue(), ((Integer) argument[4]).intValue());
-			os.print(ret);
+			os.writeBoolean(ret);
 			return true;
 		}
 		else if(((String) argument[0]).equals("addCar"))
 		{
 			boolean ret = addCars(((Integer) argument[1]).intValue(), ((String) argument[2]).toString(), ((Integer) argument[3]).intValue(), ((Integer) argument[4]).intValue());
-			os.print(ret);
+			os.writeBoolean(ret);
 			return true;
 		}
 		else if(((String) argument[0]).equals("addRoom"))
 		{
 			boolean ret = addRooms(((Integer) argument[1]).intValue(), ((String) argument[2]).toString(), ((Integer) argument[3]).intValue(), ((Integer) argument[4]).intValue());
-			os.print(ret);
+			os.writeBoolean(ret);
 			return true;
 		}
 		else if(((String) argument[0]).equals("newcustomer"))
 		{
 			int ret = newCustomer(((Integer) argument[1]).intValue());
-			os.print(ret);
+			os.writeInt(ret);
 			return true;
 		}
 		else if (((String) argument[0]).equals("newcustomerid"))
 		{
 			boolean ret = newCustomer(((Integer) argument[1]).intValue(),((Integer) argument[2]).intValue());
-			os.print(ret);
+			os.writeBoolean(ret);
 			return true;
 		}
 		else if(((String) argument[0]).equals("deleteflight"))
 		{
 			boolean ret = deleteFlight(((Integer) argument[1]).intValue(),((Integer) argument[2]).intValue());
-			os.print(ret);
+			os.writeBoolean(ret);
 			return true;
 		}
 		else if(((String) argument[0]).equals("deletecar"))
 		{
 			boolean ret = deleteCars(((Integer) argument[1]).intValue(),((String) argument[2]).toString());
-			os.print(ret);
+			os.writeBoolean(ret);
 			return true;
 		}
 		else if(((String) argument[0]).equals("deleteroom"))
 		{
 			boolean ret = deleteRooms(((Integer) argument[1]).intValue(),((String) argument[2]).toString());
-			os.print(ret);
+			os.writeBoolean(ret);
 			return true;
 		}
 		else if(((String) argument[0]).equals("deletecustomer"))
 		{
 			boolean ret = deleteCustomer(((Integer) argument[1]).intValue(),((Integer) argument[2]).intValue());
-			os.print(ret);
+			os.writeBoolean(ret);
 			return true;
 		}
 		else if(((String) argument[0]).equals("queryflight"))
 		{
 			int ret = queryFlight(((Integer) argument[1]).intValue(),((Integer) argument[2]).intValue());
-			os.print(ret);
+			os.writeInt(ret);
 			return true;
 		}
 		else if(((String) argument[0]).equals("querycar"))
 		{
 			int ret = queryCars(((Integer) argument[1]).intValue(),((String) argument[2]).toString());
-			os.print(ret);
+			os.writeInt(ret);
 			return true;
 		}
 		else if(((String) argument[0]).equals("queryroom"))
 		{
 			int ret = queryRooms(((Integer) argument[1]).intValue(),((String) argument[2]).toString());
-			os.print(ret);
+			os.writeInt(ret);
 			return true;
 		}
 		else if(((String) argument[0]).equals("querycustomer"))
 		{
 			String ret = queryCustomerInfo(((Integer) argument[1]).intValue(),((Integer) argument[2]).intValue());
-			os.print(ret);
+			os.writeBytes(ret);
 			return true;
 		}
 		else if(((String) argument[0]).equals("queryflightprice"))
 		{
 			int ret = queryFlightPrice(((Integer) argument[1]).intValue(),((Integer) argument[2]).intValue());
-			os.print(ret);
+			os.writeInt(ret);
 			return true;
 		}
 		else if(((String) argument[0]).equals("querycarprice"))
 		{
 			int ret = queryCarsPrice(((Integer) argument[1]).intValue(),((String) argument[2]).toString());
-			os.print(ret);
+			os.writeInt(ret);
 			return true;
 		}
 		else if(((String) argument[0]).equals("queryroomprice"))
 		{
 			int ret = queryRoomsPrice(((Integer) argument[1]).intValue(),((String) argument[2]).toString());
-			os.print(ret);
+			os.writeInt(ret);
 			return true;
 		}
 		else if(((String) argument[0]).equals("reserveItemHelper"))
 		{
 			int ret = reserveItemHelper(((Integer) argument[1]).intValue(),((Integer) argument[2]).intValue(),((String) argument[3]).toString(),((String) argument[4]).toString());
-			os.print(ret);
+			os.writeInt(ret);
 			return true;
 		}
 		else if(((String) argument[0]).equals("reservecar"))
 		{
 			boolean ret = reserveCar(((Integer) argument[1]).intValue(),((Integer) argument[2]).intValue(),((String) argument[3]).toString());
-			os.print(ret);
+			os.writeBoolean(ret);
 			return true;
 		}
 		else if(((String) argument[0]).equals("reserveroom"))
 		{
 			boolean ret = reserveCar(((Integer) argument[1]).intValue(),((Integer) argument[2]).intValue(),((String) argument[3]).toString());
-			os.print(ret);
+			os.writeBoolean(ret);
 			return true;
 		}
 		else if(((String) argument[0]).equals("itinerary"))
 		{
 			boolean ret = itinerary(((Integer) argument[1]).intValue(),((Integer) argument[2]).intValue(),((Vector<Integer>) argument[3]),((String) argument[4]).toString(), ((Boolean) argument[5]).booleanValue(),((Boolean) argument[6]).booleanValue());
-			os.print(ret);
+			os.writeBoolean(ret);
 			return true;
 		}		
 		else
