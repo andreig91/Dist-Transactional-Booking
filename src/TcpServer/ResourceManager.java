@@ -1,6 +1,4 @@
 import java.io.IOException;
-import java.rmi.Remote;
-import java.rmi.RemoteException;
 
 import java.util.*;
 /** 
@@ -19,7 +17,7 @@ import java.util.*;
  * has succeeded.
  */
 
-public interface ResourceManager extends Remote 
+public interface ResourceManager 
 {
     /* Add seats to a flight.  In general this will be used to create a new
      * flight, but it should be possible to add seats to an existing flight.
@@ -35,23 +33,22 @@ public interface ResourceManager extends Remote
      * instead of a flight number.
      */
     public boolean addCars(int id, String location, int numCars, int price) 
-	throws RemoteException; 
+	throws IOException; 
    
     /* Add rooms to a location.  
      * This should look a lot like addFlight, only keyed on a string location
      * instead of a flight number.
      */
     public boolean addRooms(int id, String location, int numRooms, int price) 
-	throws RemoteException; 			    
+	throws IOException; 			    
 
 			    
     /* new customer just returns a unique customer identifier */
     public int newCustomer(int id) 
-	throws RemoteException; 
+	throws IOException; 
     
     /* new customer with providing id */
     public boolean newCustomer(int id, int cid);
-
     /**
      *   Delete the entire flight.
      *   deleteflight implies whole deletion of the flight.  
@@ -61,7 +58,7 @@ public interface ResourceManager extends Remote
      * @return success.
      */   
     public boolean deleteFlight(int id, int flightNum) 
-	throws RemoteException; 
+	throws IOException; 
     
     /* Delete all Cars from a location.
      * It may not succeed if there are reservations for this location
@@ -69,7 +66,7 @@ public interface ResourceManager extends Remote
      * @return success
      */		    
     public boolean deleteCars(int id, String location) 
-	throws RemoteException; 
+	throws IOException; 
 
     /* Delete all Rooms from a location.
      * It may not succeed if there are reservations for this location.
@@ -77,39 +74,39 @@ public interface ResourceManager extends Remote
      * @return success
      */
     public boolean deleteRooms(int id, String location) 
-	throws RemoteException; 
+	throws IOException; 
     
     /* deleteCustomer removes the customer and associated reservations */
     public boolean deleteCustomer(int id,int customer) 
-	throws RemoteException; 
+	throws IOException; 
 
     /* queryFlight returns the number of empty seats. */
     public int queryFlight(int id, int flightNumber) 
-	throws RemoteException; 
+	throws IOException;
 
     /* return the number of cars available at a location */
     public int queryCars(int id, String location) 
-	throws RemoteException; 
+	throws IOException; 
 
     /* return the number of rooms available at a location */
     public int queryRooms(int id, String location) 
-	throws RemoteException; 
+	throws IOException; 
 
     /* return a bill */
     public String queryCustomerInfo(int id,int customer) 
-	throws RemoteException; 
+	throws IOException;
     
     /* queryFlightPrice returns the price of a seat on this flight. */
     public int queryFlightPrice(int id, int flightNumber) 
-	throws RemoteException; 
+	throws IOException; 
 
     /* return the price of a car at a location */
     public int queryCarsPrice(int id, String location) 
-	throws RemoteException; 
+	throws IOException; 
 
     /* return the price of a room at a location */
     public int queryRoomsPrice(int id, String location) 
-	throws RemoteException; 
+	throws IOException; 
 
     /* Reserve a seat on this flight*/
     public boolean reserveFlight(int id, int customer, int flightNumber) throws IOException; 
@@ -128,10 +125,10 @@ public interface ResourceManager extends Remote
 
     /* decrease the reserved count and increase the available count of an item */
     public boolean removeReservation(int id, String key, int count)
-    throws RemoteException;
+    throws IOException;
     
     /* reserve an itinerary */
     public boolean itinerary(int id,int customer,Vector flightNumbers,String location, boolean Car, boolean Room)
-	throws RemoteException; 
+	throws IOException; 
     			
 }

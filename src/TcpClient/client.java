@@ -128,7 +128,7 @@ public class client
 				}
 				break;
 
-				/*case 3: // new Car
+				case 3: // new Car
 				if (arguments.size() != 5) {
 					obj.wrongNumber();
 					break;
@@ -144,10 +144,23 @@ public class client
 					location = obj.getString(arguments.elementAt(2));
 					numCars = obj.getInt(arguments.elementAt(3));
 					price = obj.getInt(arguments.elementAt(4));
-					if (rm.addCars(Id, location, numCars, price))
+					String method = "addCar";
+					ArrayList<Object> array = new ArrayList<Object>();
+					array.add(method);
+					array.add(Id);
+					array.add(location);
+					array.add(numCars);
+					array.add(price);
+					oos.writeObject(array);
+					if(is.readBoolean())
+					{
 						System.out.println("Cars added");
+					}
 					else
+					{
 						System.out.println("Cars could not be added");
+					}
+						
 				} catch (Exception e) {
 					System.out.println("EXCEPTION:");
 					System.out.println(e.getMessage());
@@ -155,7 +168,7 @@ public class client
 				}
 				break;
 
-			case 4: // new Room
+				case 4: // new Room
 				if (arguments.size() != 5) {
 					obj.wrongNumber();
 					break;
@@ -171,10 +184,22 @@ public class client
 					location = obj.getString(arguments.elementAt(2));
 					numRooms = obj.getInt(arguments.elementAt(3));
 					price = obj.getInt(arguments.elementAt(4));
-					if (rm.addRooms(Id, location, numRooms, price))
+					String method = "addRoom";
+					ArrayList<Object> array = new ArrayList<Object>();
+					array.add(method);
+					array.add(Id);
+					array.add(location);
+					array.add(numRooms);
+					array.add(price);
+					oos.writeObject(array);
+					if(is.readBoolean())
+					{
 						System.out.println("Rooms added");
+					}
 					else
+					{
 						System.out.println("Rooms could not be added");
+					}
 				} catch (Exception e) {
 					System.out.println("EXCEPTION:");
 					System.out.println(e.getMessage());
@@ -182,7 +207,7 @@ public class client
 				}
 				break;
 
-			case 5: // new Customer
+			/*case 5: // new Customer
 				if (arguments.size() != 2) {
 					obj.wrongNumber();
 					break;
@@ -199,7 +224,7 @@ public class client
 					e.printStackTrace();
 				}
 				break;
-
+*/
 			case 6: // delete Flight
 				if (arguments.size() != 3) {
 					obj.wrongNumber();
@@ -208,7 +233,7 @@ public class client
 				System.out.println("Deleting a flight using id: "
 						+ arguments.elementAt(1));
 				System.out.println("Flight Number: " + arguments.elementAt(2));
-				try {
+/*				try {
 					Id = obj.getInt(arguments.elementAt(1));
 					flightNum = obj.getInt(arguments.elementAt(2));
 					if (rm.deleteFlight(Id, flightNum))
@@ -220,8 +245,39 @@ public class client
 					System.out.println(e.getMessage());
 					e.printStackTrace();
 				}
+	*/			
+				try 
+				{
+					Id = obj.getInt(arguments.elementAt(1));
+					flightNum = obj.getInt(arguments.elementAt(2));
+					
+					String method = "deleteFlight";
+					ArrayList<Object> array = new ArrayList<Object>();
+					array.add(method);
+					array.add(Id);
+					array.add(flightNum);
+					oos.writeObject(array);
+					if(is.readBoolean())
+					{
+						System.out.println("Flight deleted");
+					}
+					else
+					{
+						System.out.println("Flight could not be deleted");
+					}
+				} 
+				catch (Exception e) 
+				{
+					System.out.println("EXCEPTION:");
+					System.out.println(e.getMessage());
+					e.printStackTrace();
+				}
+				
+				
+				
+				
 				break;
-
+/*
 			case 7: // delete Car
 				if (arguments.size() != 3) {
 					obj.wrongNumber();
