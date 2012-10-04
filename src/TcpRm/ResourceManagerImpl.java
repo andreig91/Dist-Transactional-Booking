@@ -79,23 +79,52 @@ public class ResourceManagerImpl extends Thread implements ResourceManager
 	// Reads a data item
 	private RMItem readData( int id, String key )
 	{
-		synchronized(m_itemHT){
-			return (RMItem) m_itemHT.get(key);
+		if(key.charAt(0) == 'f')
+		{
+			return FlightHashTable.readData(id, key);
 		}
+		else if(key.charAt(0) == 'c')
+		{
+			return CarHashTable.readData(id, key);
+		}
+		else
+		{
+			return HotelHashTable.readData(id, key);
+		}
+		
 	}
 
 	// Writes a data item
 	private void writeData( int id, String key, RMItem value )
 	{
-		synchronized(m_itemHT){
-			m_itemHT.put(key, value);
+		if(key.charAt(0) == 'f')
+		{
+			FlightHashTable.writeData(id, key, value);
+		}
+		else if(key.charAt(0) == 'c')
+		{
+			CarHashTable.writeData(id, key, value);
+		}
+		else
+		{
+			HotelHashTable.writeData(id, key, value);
 		}
 	}
 
 	// Remove the item out of storage
-	protected RMItem removeData(int id, String key){
-		synchronized(m_itemHT){
-			return (RMItem)m_itemHT.remove(key);
+	protected RMItem removeData(int id, String key)
+	{
+		if(key.charAt(0) == 'f')
+		{
+			return FlightHashTable.removeData(id, key);
+		}
+		else if(key.charAt(0) == 'c')
+		{
+			return CarHashTable.removeData(id, key);
+		}
+		else
+		{
+			return HotelHashTable.removeData(id, key);
 		}
 	}
 

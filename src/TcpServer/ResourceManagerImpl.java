@@ -141,24 +141,18 @@ public class ResourceManagerImpl extends Thread implements ResourceManager
 	// Reads a data item
 	private RMItem readData( int id, String key )
 	{
-		synchronized(m_itemHT){
-			return (RMItem) m_itemHT.get(key);
-		}
+		return MwHashTable.readData(id, key);			
 	}
 
 	// Writes a data item
 	private void writeData( int id, String key, RMItem value )
 	{
-		synchronized(m_itemHT){
-			m_itemHT.put(key, value);
-		}
+		MwHashTable.writeData(id, key, value);
 	}
 
 	// Remove the item out of storage
 	protected RMItem removeData(int id, String key){
-		synchronized(m_itemHT){
-			return (RMItem)m_itemHT.remove(key);
-		}
+		return MwHashTable.removeData(id, key);
 	}
 
 
