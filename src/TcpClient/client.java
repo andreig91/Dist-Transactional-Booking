@@ -380,7 +380,7 @@ public class client
 					e.printStackTrace();
 				}
 				break;
-
+*/
 			case 10: // querying a flight
 				if (arguments.size() != 3) {
 					obj.wrongNumber();
@@ -389,12 +389,25 @@ public class client
 				System.out.println("Querying a flight using id: "
 						+ arguments.elementAt(1));
 				System.out.println("Flight number: " + arguments.elementAt(2));
-				try {
+				
+				
+				try 
+				{
 					Id = obj.getInt(arguments.elementAt(1));
 					flightNum = obj.getInt(arguments.elementAt(2));
-					int seats = rm.queryFlight(Id, flightNum);
-					System.out.println("Number of seats available:" + seats);
-				} catch (Exception e) {
+					
+					String method = "queryFlight";
+					ArrayList<Object> array = new ArrayList<Object>();
+					array.add(method);
+					array.add(Id);
+					array.add(flightNum);
+					oos.writeObject(array);
+					
+					System.out.println("Number of seats available: " + is.readInt());
+					
+				} 
+				catch (Exception e) 
+				{
 					System.out.println("EXCEPTION:");
 					System.out.println(e.getMessage());
 					e.printStackTrace();
@@ -409,17 +422,30 @@ public class client
 				System.out.println("Querying a car location using id: "
 						+ arguments.elementAt(1));
 				System.out.println("Car location: " + arguments.elementAt(2));
-				try {
+				
+				try 
+				{
 					Id = obj.getInt(arguments.elementAt(1));
 					location = obj.getString(arguments.elementAt(2));
-					numCars = rm.queryCars(Id, location);
-					System.out.println("number of Cars at this location:"
-							+ numCars);
-				} catch (Exception e) {
+					
+					String method = "queryCar";
+					ArrayList<Object> array = new ArrayList<Object>();
+					array.add(method);
+					array.add(Id);
+					array.add(location);
+					oos.writeObject(array);
+					
+					System.out.println("number of Cars at this location: " + is.readInt());
+					
+				} 
+				catch (Exception e) 
+				{
 					System.out.println("EXCEPTION:");
 					System.out.println(e.getMessage());
 					e.printStackTrace();
 				}
+				
+				
 				break;
 
 			case 12: // querying a Room location
@@ -430,19 +456,33 @@ public class client
 				System.out.println("Querying a room location using id: "
 						+ arguments.elementAt(1));
 				System.out.println("Room location: " + arguments.elementAt(2));
-				try {
+				
+				
+				try 
+				{
 					Id = obj.getInt(arguments.elementAt(1));
 					location = obj.getString(arguments.elementAt(2));
-					numRooms = rm.queryRooms(Id, location);
-					System.out.println("number of Rooms at this location:"
-							+ numRooms);
-				} catch (Exception e) {
+					
+					String method = "queryRoom";
+					ArrayList<Object> array = new ArrayList<Object>();
+					array.add(method);
+					array.add(Id);
+					array.add(location);
+					oos.writeObject(array);
+					
+					System.out.println("number of Rooms at this location: " + is.readInt());
+					
+				} 
+				catch (Exception e) 
+				{
 					System.out.println("EXCEPTION:");
 					System.out.println(e.getMessage());
 					e.printStackTrace();
 				}
+				
+				
 				break;
-
+/*
 			case 13: // querying Customer Information
 				if (arguments.size() != 3) {
 					obj.wrongNumber();
@@ -462,7 +502,7 @@ public class client
 					e.printStackTrace();
 				}
 				break;
-
+*/
 			case 14: // querying a flight Price
 				if (arguments.size() != 3) {
 					obj.wrongNumber();
@@ -471,16 +511,30 @@ public class client
 				System.out.println("Querying a flight Price using id: "
 						+ arguments.elementAt(1));
 				System.out.println("Flight number: " + arguments.elementAt(2));
-				try {
+				
+				
+				try 
+				{
 					Id = obj.getInt(arguments.elementAt(1));
 					flightNum = obj.getInt(arguments.elementAt(2));
-					price = rm.queryFlightPrice(Id, flightNum);
-					System.out.println("Price of a seat:" + price);
-				} catch (Exception e) {
+					
+					String method = "queryFlightPrice";
+					ArrayList<Object> array = new ArrayList<Object>();
+					array.add(method);
+					array.add(Id);
+					array.add(flightNum);
+					oos.writeObject(array);
+					
+					System.out.println("Price of a seat: " + is.readInt());
+					
+				} 
+				catch (Exception e) 
+				{
 					System.out.println("EXCEPTION:");
 					System.out.println(e.getMessage());
 					e.printStackTrace();
 				}
+				
 				break;
 
 			case 15: // querying a Car Price
@@ -491,17 +545,30 @@ public class client
 				System.out.println("Querying a car price using id: "
 						+ arguments.elementAt(1));
 				System.out.println("Car location: " + arguments.elementAt(2));
-				try {
+				
+				
+				try 
+				{
 					Id = obj.getInt(arguments.elementAt(1));
 					location = obj.getString(arguments.elementAt(2));
-					price = rm.queryCarsPrice(Id, location);
-					System.out.println("Price of a car at this location:"
-							+ price);
-				} catch (Exception e) {
+					
+					String method = "queryCarPrice";
+					ArrayList<Object> array = new ArrayList<Object>();
+					array.add(method);
+					array.add(Id);
+					array.add(location);
+					oos.writeObject(array);
+					
+					System.out.println("Price of a car at this location: " + is.readInt());
+					
+				} 
+				catch (Exception e) 
+				{
 					System.out.println("EXCEPTION:");
 					System.out.println(e.getMessage());
 					e.printStackTrace();
 				}
+				
 				break;
 
 			case 16: // querying a Room price
@@ -512,19 +579,31 @@ public class client
 				System.out.println("Querying a room price using id: "
 						+ arguments.elementAt(1));
 				System.out.println("Room Location: " + arguments.elementAt(2));
-				try {
+				
+				
+				try 
+				{
 					Id = obj.getInt(arguments.elementAt(1));
 					location = obj.getString(arguments.elementAt(2));
-					price = rm.queryRoomsPrice(Id, location);
-					System.out.println("Price of Rooms at this location:"
-							+ price);
-				} catch (Exception e) {
+					
+					String method = "queryRoomPrice";
+					ArrayList<Object> array = new ArrayList<Object>();
+					array.add(method);
+					array.add(Id);
+					array.add(location);
+					oos.writeObject(array);
+					
+					System.out.println("Price of Rooms at this location: " + is.readInt());
+					
+				} 
+				catch (Exception e) 
+				{
 					System.out.println("EXCEPTION:");
 					System.out.println(e.getMessage());
 					e.printStackTrace();
 				}
 				break;
-			*/
+			
 			case 17: // reserve a flight
 				if (arguments.size() != 4) 
 				{
