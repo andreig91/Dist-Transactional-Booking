@@ -359,7 +359,14 @@ public class ResourceManagerImpl extends Thread implements ResourceManager
 	public int queryFlight(int id, int flightNum)
 	throws IOException
 	{
-		return 1; //rmF.queryFlight(id, flightNum);
+		Trace.info("RM::queryFlight(" + id + ", " + flightNum + ") called on middleware" );
+		array = new ArrayList<Object>();
+		String method = "queryFlight";
+		array.add(method);
+		array.add(id);
+		array.add(flightNum);
+		fOs.writeObject(array);
+		return fIs.readInt();
 	}
 
 	// Returns the number of reservations for this flight. 
@@ -378,42 +385,74 @@ public class ResourceManagerImpl extends Thread implements ResourceManager
 
 	// Returns price of this flight
 	public int queryFlightPrice(int id, int flightNum )
-			throws IOException
-			{
-		return 1; //rmF.queryFlightPrice(id, flightNum);
-			}
-
+	throws IOException
+	{
+		Trace.info("RM::queryFlightPrice(" + id + ", " + flightNum + ") called on middleware" );
+		array = new ArrayList<Object>();
+		String method = "queryFlightPrice";
+		array.add(method);
+		array.add(id);
+		array.add(flightNum);
+		fOs.writeObject(array);
+		return fIs.readInt();
+	}
 
 	// Returns the number of rooms available at a location
 	public int queryRooms(int id, String location)
-			throws IOException
-			{
-		return 1; //rmH.queryRooms(id, location);
-			}
-
+	throws IOException
+	{
+		Trace.info("RM::queryRooms(" + id + ", " + location + ") called on middleware" );
+		array = new ArrayList<Object>();
+		String method = "queryRoom";
+		array.add(method);
+		array.add(id);
+		array.add(location);
+		hOs.writeObject(array);
+		return hIs.readInt();
+	}
 
 	// Returns room price at this location
 	public int queryRoomsPrice(int id, String location)
-			throws IOException
-			{
-		return 1; //rmH.queryRoomsPrice(id, location);
-			}
-
+	throws IOException
+	{
+		Trace.info("RM::queryRoomPrice(" + id + ", " + location + ") called on middleware" );
+		array = new ArrayList<Object>();
+		String method = "queryRoomPrice";
+		array.add(method);
+		array.add(id);
+		array.add(location);
+		hOs.writeObject(array);
+		return hIs.readInt();
+	}
 
 	// Returns the number of cars available at a location
 	public int queryCars(int id, String location)
-			throws IOException
-			{
-		return 1; //rmC.queryCars(id, location);
-			}
+	throws IOException
+	{
+		Trace.info("RM::queryCars(" + id + ", " + location + ") called on middleware" );
+		array = new ArrayList<Object>();
+		String method = "queryCar";
+		array.add(method);
+		array.add(id);
+		array.add(location);
+		cOs.writeObject(array);
+		return cIs.readInt();
+	}
 
 
 	// Returns price of cars at this location
 	public int queryCarsPrice(int id, String location)
-			throws IOException
-			{
-		return 1; //rmC.queryCarsPrice(id, location);
-			}
+	throws IOException
+	{
+		Trace.info("RM::queryCarPrice(" + id + ", " + location + ") called on middleware" );
+		array = new ArrayList<Object>();
+		String method = "queryCarPrice";
+		array.add(method);
+		array.add(id);
+		array.add(location);
+		cOs.writeObject(array);
+		return cIs.readInt();
+	}
 
 	// Returns data structure containing customer reservation info. Returns null if the
 	//  customer doesn't exist. Returns empty RMHashtable if customer exists but has no
