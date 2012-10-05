@@ -51,7 +51,7 @@ public class client2
 
 		System.out.println("\n\n\tClient Interface");
 		System.out.println("Type \"help\" for list of supported commands");
-		BufferedReader in;
+		BufferedReader in = null;
 		try {
 		    in = new BufferedReader(new FileReader("clientinput.txt"));
 		}

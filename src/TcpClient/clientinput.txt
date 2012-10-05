@@ -1,0 +1,4 @@
+newflight,1,1,1,1
+newcustomerid,1,1
+reserveflight,1,1,1
+quit

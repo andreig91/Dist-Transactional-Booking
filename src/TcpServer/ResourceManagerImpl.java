@@ -458,41 +458,46 @@ public class ResourceManagerImpl extends Thread implements ResourceManager
 	//  customer doesn't exist. Returns empty RMHashtable if customer exists but has no
 	//  reservations.
 	public RMHashtable getCustomerReservations(int id, int customerID)
-			throws IOException
-			{
+	throws IOException
+	{
 		Trace.info("RM::getCustomerReservations(" + id + ", " + customerID + ") called" );
 		Customer cust = (Customer) readData( id, Customer.getKey(customerID) );
-		if( cust == null ) {
+		if( cust == null ) 
+		{
 			Trace.warn("RM::getCustomerReservations failed(" + id + ", " + customerID + ") failed--customer doesn't exist" );
 			return null;
-		} else {
+		} 
+		else 
+		{
 			return cust.getReservations();
-		} // if
-			}
+		}
+	}
 
 	// return a bill
 	public String queryCustomerInfo(int id, int customerID)
-			throws IOException
-			{
+	throws IOException
+	{
 		Trace.info("RM::queryCustomerInfo(" + id + ", " + customerID + ") called" );
 		Customer cust = (Customer) readData( id, Customer.getKey(customerID) );
-		if( cust == null ) {
+		if( cust == null )
+		{
 			Trace.warn("RM::queryCustomerInfo(" + id + ", " + customerID + ") failed--customer doesn't exist" );
 			return "";   // NOTE: don't change this--WC counts on this value indicating a customer does not exist...
-		} else {
+		}
+		else
+		{
 			String s = cust.printBill();
 			Trace.info("RM::queryCustomerInfo(" + id + ", " + customerID + "), bill follows..." );
 			System.out.println( s );
 			return s;
-		} // if
-			}
+		}
+	}
 
 	// customer functions
 	// new customer just returns a unique customer identifier
-
 	public int newCustomer(int id)
-			throws IOException
-			{
+	throws IOException
+	{
 		Trace.info("INFO: RM::newCustomer(" + id + ") called" );
 		// Generate a globally unique ID for the new customer
 		int cid = Integer.parseInt( String.valueOf(id) +
@@ -502,19 +507,22 @@ public class ResourceManagerImpl extends Thread implements ResourceManager
 		writeData( id, cust.getKey(), cust );
 		Trace.info("RM::newCustomer(" + cid + ") returns ID=" + cid );
 		return cid;
-			}
+	}
 
 	// I opted to pass in customerID instead. This makes testing easier
 	public boolean newCustomer(int id, int customerID )
 	{
 		Trace.info("INFO: RM::newCustomer(" + id + ", " + customerID + ") called" );
 		Customer cust = (Customer) readData( id, Customer.getKey(customerID) );
-		if( cust == null ) {
+		if( cust == null ) 
+		{
 			cust = new Customer(customerID);
 			writeData( id, cust.getKey(), cust );
 			Trace.info("INFO: RM::newCustomer(" + id + ", " + customerID + ") created a new customer" );
 			return true;
-		} else {
+		} 
+		else 
+		{
 			Trace.info("INFO: RM::newCustomer(" + id + ", " + customerID + ") failed--customer already exists");
 			return false;
 		} // else
@@ -523,56 +531,75 @@ public class ResourceManagerImpl extends Thread implements ResourceManager
 
 	// Deletes customer from the database. 
 	public boolean deleteCustomer(int id, int customerID)
-			throws IOException
-			{
+	throws IOException
+	{
 		Trace.info("RM::deleteCustomer(" + id + ", " + customerID + ") called" );
 		Customer cust = (Customer) readData( id, Customer.getKey(customerID) );
-		if( cust == null ) {
+		if( cust == null )
+		{
 			Trace.warn("RM::deleteCustomer(" + id + ", " + customerID + ") failed--customer doesn't exist" );
 			return false;
-		} else {			
+		} 
+		else 
+		{			
 			// Increase the reserved numbers of all reservable items which the customer reserved. 
 			RMHashtable reservationHT = cust.getReservations();
-			for(Enumeration e = reservationHT.keys(); e.hasMoreElements();){		
+			
+			for(Enumeration e = reservationHT.keys(); e.hasMoreElements();)
+			{		
 				String reservedkey = (String) (e.nextElement());
 				ReservedItem reserveditem = cust.getReservedItem(reservedkey);
 				Trace.info("RM::deleteCustomer(" + id + ", " + customerID + ") has reserved " + reserveditem.getKey() + " " +  reserveditem.getCount() +  " times"  );
 				boolean temp;
 				if(reserveditem.getKey().charAt(0) == 'f')
 				{
-					temp = true; //rmF.removeReservation(id, reserveditem.getKey(), reserveditem.getCount());
+					array = new ArrayList<Object>();
+					String method = "removeReservation";
+					array.add(method);
+					array.add(id);
+					array.add(reserveditem.getKey());
+					array.add(reserveditem.getCount());
+					fOs.writeObject(array);
+					temp = fIs.readBoolean();
 				}
 				else if(reserveditem.getKey().charAt(0) == 'c')
 				{
-					temp = true; //rmC.removeReservation(id, reserveditem.getKey(), reserveditem.getCount());
+					array = new ArrayList<Object>();
+					String method = "removeReservation";
+					array.add(method);
+					array.add(id);
+					array.add(reserveditem.getKey());
+					array.add(reserveditem.getCount());
+					cOs.writeObject(array);
+					temp = cIs.readBoolean();
 				}
 				else
 				{
-					temp = true; //rmH.removeReservation(id, reserveditem.getKey(), reserveditem.getCount());
+					array = new ArrayList<Object>();
+					String method = "removeReservation";
+					array.add(method);
+					array.add(id);
+					array.add(reserveditem.getKey());
+					array.add(reserveditem.getCount());
+					hOs.writeObject(array);
+					temp = hIs.readBoolean();
 				}
 				if(!temp)
 				{
 					return false;
 				}
-				//ReservableItem item  = (ReservableItem) readData(id, reserveditem.getKey());
-				//Trace.info("RM::deleteCustomer(" + id + ", " + customerID + ") has reserved " + reserveditem.getKey() + "which is reserved" +  item.getReserved() +  " times and is still available " + item.getCount() + " times"  );
-				//item.setReserved(item.getReserved()-reserveditem.getCount());
-				//item.setCount(item.getCount()+reserveditem.getCount());
 			}
-
-			// remove the customer from the storage
 			removeData(id, cust.getKey());
-
 			Trace.info("RM::deleteCustomer(" + id + ", " + customerID + ") succeeded" );
 			return true;
 		}
-			}
+	}
 
 	public boolean removeReservation(int id, String key, int count)
-			throws IOException
-			{
+	throws IOException
+	{
 		return true;
-			}
+	}
 
 
 	// Frees flight reservation record. Flight reservation records help us make sure we
@@ -594,35 +621,46 @@ public class ResourceManagerImpl extends Thread implements ResourceManager
 
 	// Adds car reservation to this customer. 
 	public boolean reserveCar(int id, int customerID, String location)
-			throws IOException
-			{
+	throws IOException
+	{
 		return reserveItem(id, customerID, Car.getKey(location), location);
-			}
+	}
 
 	// Adds room reservation to this customer. 
 	public boolean reserveRoom(int id, int customerID, String location)
-			throws IOException
-			{
+	throws IOException
+	{
 		return reserveItem(id, customerID, Hotel.getKey(location), location);
-			}
+	}
+	
 	// Adds flight reservation to this customer.  
 	public boolean reserveFlight(int id, int customerID, int flightNum)
-			throws IOException
-			{
+	throws IOException
+	{
 		return reserveItem(id, customerID, Flight.getKey(flightNum), String.valueOf(flightNum));
-			}
+	}
 
 	/* reserve an itinerary */
 	public boolean itinerary(int id,int customer,Vector flightNumbers,String location,boolean car,boolean Room)
-			throws IOException {
+	throws IOException 
+	{
 		Customer cust = (Customer) readData( id, Customer.getKey(customer) );		
-		if( cust == null ) {
+		if( cust == null ) 
+		{
 			Trace.warn("RM::itinerary( " + id + ", " + customer + ", " + location+")  failed--customer doesn't exist" );
 			return false;
 		}
 		if(car)
 		{
-			int carPrice = 1; //rmC.reserveItemHelper(id, customer,Car.getKey(location), location);
+			array = new ArrayList<Object>();
+			String method = "reserveItemHelper";
+			array.add(method);
+			array.add(id);
+			array.add(customer);
+			array.add(Car.getKey(location));
+			array.add(location);
+			cOs.writeObject(array);
+			int carPrice = cIs.readInt();
 			if(carPrice == -1)
 			{
 				return false;
@@ -632,7 +670,15 @@ public class ResourceManagerImpl extends Thread implements ResourceManager
 		}
 		if(Room)
 		{
-			int roomPrice = 1; //rmH.reserveItemHelper(id, customer,Hotel.getKey(location), location);
+			array = new ArrayList<Object>();
+			String method = "reserveItemHelper";
+			array.add(method);
+			array.add(id);
+			array.add(customer);
+			array.add(Hotel.getKey(location));
+			array.add(location);
+			hOs.writeObject(array);
+			int roomPrice = hIs.readInt();
 			if(roomPrice == -1)
 			{
 				return false;
@@ -645,7 +691,15 @@ public class ResourceManagerImpl extends Thread implements ResourceManager
 		while(iterator.hasNext())
 		{
 			int flightNum = Integer.parseInt(iterator.next().toString());
-			flightPrice = 1; //rmF.reserveItemHelper(id, customer, Flight.getKey(flightNum), String.valueOf(flightNum));
+			array = new ArrayList<Object>();
+			String method = "reserveItemHelper";
+			array.add(method);
+			array.add(id);
+			array.add(customer);
+			array.add(Flight.getKey(flightNum));
+			array.add(String.valueOf(flightNum));
+			fOs.writeObject(array);
+			flightPrice = fIs.readInt();
 			if(flightPrice == -1)
 			{
 				return false;

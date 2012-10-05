@@ -634,10 +634,10 @@ public class ResourceManagerImpl extends Thread implements ResourceManager
 			os.writeInt(ret);
 			return true;
 		}
-		else if(((String) argument[0]).equals("queryCustomer"))
+		else if(((String) argument[0]).equals("removeReservation"))
 		{
-			String ret = queryCustomerInfo(((Integer) argument[1]).intValue(),((Integer) argument[2]).intValue());
-			os.writeBytes(ret);
+			boolean ret = removeReservation(((Integer) argument[1]).intValue(),((String) argument[2]).toString(),((Integer) argument[3]).intValue());
+			os.writeBoolean(ret);
 			return true;
 		}
 		else if(((String) argument[0]).equals("queryFlightPrice"))
