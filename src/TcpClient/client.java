@@ -642,7 +642,7 @@ public class client
 					e.printStackTrace();
 				}
 				break;
-			/*
+			
 			case 18: // reserve a car
 				if (arguments.size() != 4) {
 					obj.wrongNumber();
@@ -653,16 +653,30 @@ public class client
 				System.out.println("Customer id: " + arguments.elementAt(2));
 				System.out.println("Location: " + arguments.elementAt(3));
 
-				try {
+				
+				try 
+				{
 					Id = obj.getInt(arguments.elementAt(1));
 					int customer = obj.getInt(arguments.elementAt(2));
 					location = obj.getString(arguments.elementAt(3));
-
-					if (rm.reserveCar(Id, customer, location))
-						System.out.println("Car Reserved");
+					String method = "reserveCar";
+					ArrayList<Object> array = new ArrayList<Object>();
+					array.add(method);
+					array.add(Id);
+					array.add(customer);
+					array.add(location);
+					oos.writeObject(array);
+					if(is.readBoolean())
+					{
+						System.out.println("Car reserved");
+					}
 					else
-						System.out.println("Car could not be reserved.");
-				} catch (Exception e) {
+					{
+						System.out.println("Car could not be reserved");
+					}
+				} 
+				catch (Exception e) 
+				{
 					System.out.println("EXCEPTION:");
 					System.out.println(e.getMessage());
 					e.printStackTrace();
@@ -678,22 +692,38 @@ public class client
 						+ arguments.elementAt(1));
 				System.out.println("Customer id: " + arguments.elementAt(2));
 				System.out.println("Location: " + arguments.elementAt(3));
-				try {
+				
+				
+				try 
+				{
 					Id = obj.getInt(arguments.elementAt(1));
 					int customer = obj.getInt(arguments.elementAt(2));
 					location = obj.getString(arguments.elementAt(3));
-
-					if (rm.reserveRoom(Id, customer, location))
-						System.out.println("Room Reserved");
+					String method = "reserveRoom";
+					ArrayList<Object> array = new ArrayList<Object>();
+					array.add(method);
+					array.add(Id);
+					array.add(customer);
+					array.add(location);
+					oos.writeObject(array);
+					if(is.readBoolean())
+					{
+						System.out.println("Room reserved");
+					}
 					else
-						System.out.println("Room could not be reserved.");
-				} catch (Exception e) {
+					{
+						System.out.println("Room could not be reserved");
+					}
+				} 
+				catch (Exception e) 
+				{
 					System.out.println("EXCEPTION:");
 					System.out.println(e.getMessage());
 					e.printStackTrace();
 				}
+				
 				break;
-
+/*
 			case 20: // reserve an Itinerary
 				if (arguments.size() < 7) {
 					obj.wrongNumber();
