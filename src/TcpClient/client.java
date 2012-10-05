@@ -28,11 +28,13 @@ public class client
 		Socket clientSocket = null;
 		DataInputStream is = null;
 		ObjectOutputStream oos = null;
+		ObjectInputStream iis = null;
 		try 
 		{
 			clientSocket = new Socket((args[0]), Integer.parseInt(args[1]));
 			oos = new ObjectOutputStream(clientSocket.getOutputStream());
 			is = new DataInputStream(clientSocket.getInputStream());
+			iis = new ObjectInputStream(clientSocket.getInputStream());
 		} 
 		catch (UnknownHostException e) 
 		{
@@ -518,9 +520,7 @@ public class client
 					array.add(Id);
 					array.add(customer);
 					oos.writeObject(array);
-					
-					System.out.println("Customer info:" + is.readLine());
-				
+					System.out.println("Customer info:" + (String) iis.readObject());
 				} 
 				catch (Exception e) 
 				{
@@ -784,7 +784,7 @@ public class client
 
 					
 					
-					String method = "itenerary";
+					String method = "itinerary";
 					ArrayList<Object> array = new ArrayList<Object>();
 					array.add(method);
 					array.add(Id);

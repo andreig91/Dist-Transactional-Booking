@@ -22,6 +22,7 @@ public class ResourceManagerImpl extends Thread implements ResourceManager
 	//protected RMHashtable m_itemHT = new RMHashtable();
 	ObjectInputStream iis;
 	DataOutputStream os;
+	ObjectOutputStream oos;
 	Socket clientSocket;
 	String rmF;
 	int rmFPort;
@@ -40,7 +41,7 @@ public class ResourceManagerImpl extends Thread implements ResourceManager
 	ObjectOutputStream hOs;
 	ArrayList<Object> array;
 	ArrayList<Object> outArray;
-
+	
 	public ResourceManagerImpl(Socket client,String rmF,int rmFPort,String rmC,int rmCPort,String rmH,int rmHPort) 
 	{
 		clientSocket = client;
@@ -91,6 +92,7 @@ public class ResourceManagerImpl extends Thread implements ResourceManager
 		{
 			iis = new ObjectInputStream(clientSocket.getInputStream());
 			os = new DataOutputStream(clientSocket.getOutputStream());
+			oos = new ObjectOutputStream(clientSocket.getOutputStream());
 		} 
 		catch (IOException e1) 
 		{
@@ -788,7 +790,7 @@ public class ResourceManagerImpl extends Thread implements ResourceManager
 		else if(((String) argument[0]).equals("queryCustomer"))
 		{
 			String ret = queryCustomerInfo(((Integer) argument[1]).intValue(),((Integer) argument[2]).intValue());
-			os.writeBytes(ret);
+			oos.writeObject(ret);
 			return true;
 		}
 		else if(((String) argument[0]).equals("queryFlightPrice"))
@@ -823,7 +825,7 @@ public class ResourceManagerImpl extends Thread implements ResourceManager
 		}
 		else if(((String) argument[0]).equals("reserveRoom"))
 		{
-			boolean ret = reserveCar(((Integer) argument[1]).intValue(),((Integer) argument[2]).intValue(),((String) argument[3]).toString());
+			boolean ret = reserveRoom(((Integer) argument[1]).intValue(),((Integer) argument[2]).intValue(),((String) argument[3]).toString());
 			os.writeBoolean(ret);
 			return true;
 		}
