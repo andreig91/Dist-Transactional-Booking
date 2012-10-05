@@ -207,24 +207,36 @@ public class client
 				}
 				break;
 
-			/*case 5: // new Customer
+			case 5: // new Customer
 				if (arguments.size() != 2) {
 					obj.wrongNumber();
 					break;
 				}
 				System.out.println("Adding a new Customer using id:"
 						+ arguments.elementAt(1));
-				try {
+				
+				try 
+				{
 					Id = obj.getInt(arguments.elementAt(1));
-					int customer = rm.newCustomer(Id);
-					System.out.println("new customer id:" + customer);
-				} catch (Exception e) {
+					
+					String method = "newCustomer";
+					ArrayList<Object> array = new ArrayList<Object>();
+					array.add(method);
+					array.add(Id);
+					oos.writeObject(array);
+					
+					System.out.println("new customer id: " + is.readInt());
+				
+				} 
+				catch (Exception e) 
+				{
 					System.out.println("EXCEPTION:");
 					System.out.println(e.getMessage());
 					e.printStackTrace();
 				}
+				
 				break;
-*/
+
 			case 6: // delete Flight
 				if (arguments.size() != 3) {
 					obj.wrongNumber();
@@ -233,19 +245,7 @@ public class client
 				System.out.println("Deleting a flight using id: "
 						+ arguments.elementAt(1));
 				System.out.println("Flight Number: " + arguments.elementAt(2));
-/*				try {
-					Id = obj.getInt(arguments.elementAt(1));
-					flightNum = obj.getInt(arguments.elementAt(2));
-					if (rm.deleteFlight(Id, flightNum))
-						System.out.println("Flight Deleted");
-					else
-						System.out.println("Flight could not be deleted");
-				} catch (Exception e) {
-					System.out.println("EXCEPTION:");
-					System.out.println(e.getMessage());
-					e.printStackTrace();
-				}
-	*/			
+		
 				try 
 				{
 					Id = obj.getInt(arguments.elementAt(1));
@@ -357,7 +357,7 @@ public class client
 				
 				
 				break;
-/*
+
 			case 9: // delete Customer
 				if (arguments.size() != 3) {
 					obj.wrongNumber();
@@ -367,20 +367,35 @@ public class client
 						.println("Deleting a customer from the database using id: "
 								+ arguments.elementAt(1));
 				System.out.println("Customer id: " + arguments.elementAt(2));
-				try {
+				
+				try 
+				{
 					Id = obj.getInt(arguments.elementAt(1));
 					int customer = obj.getInt(arguments.elementAt(2));
-					if (rm.deleteCustomer(Id, customer))
+					
+					String method = "deleteCustomer";
+					ArrayList<Object> array = new ArrayList<Object>();
+					array.add(method);
+					array.add(Id);
+					array.add(customer);
+					oos.writeObject(array);
+					
+					if(is.readBoolean()){
 						System.out.println("Customer Deleted");
+					}
 					else
 						System.out.println("Customer could not be deleted");
-				} catch (Exception e) {
+				
+				} 
+				catch (Exception e) 
+				{
 					System.out.println("EXCEPTION:");
 					System.out.println(e.getMessage());
 					e.printStackTrace();
 				}
+				
 				break;
-*/
+
 			case 10: // querying a flight
 				if (arguments.size() != 3) {
 					obj.wrongNumber();
@@ -482,7 +497,7 @@ public class client
 				
 				
 				break;
-/*
+
 			case 13: // querying Customer Information
 				if (arguments.size() != 3) {
 					obj.wrongNumber();
@@ -491,18 +506,31 @@ public class client
 				System.out.println("Querying Customer information using id: "
 						+ arguments.elementAt(1));
 				System.out.println("Customer id: " + arguments.elementAt(2));
-				try {
+				
+				try 
+				{
 					Id = obj.getInt(arguments.elementAt(1));
 					int customer = obj.getInt(arguments.elementAt(2));
-					String bill = rm.queryCustomerInfo(Id, customer);
-					System.out.println("Customer info:" + bill);
-				} catch (Exception e) {
+					
+					String method = "queryCustomer";
+					ArrayList<Object> array = new ArrayList<Object>();
+					array.add(method);
+					array.add(Id);
+					array.add(customer);
+					oos.writeObject(array);
+					
+					System.out.println("Customer info:" + is.readLine());
+				
+				} 
+				catch (Exception e) 
+				{
 					System.out.println("EXCEPTION:");
 					System.out.println(e.getMessage());
 					e.printStackTrace();
 				}
+				
 				break;
-*/
+
 			case 14: // querying a flight Price
 				if (arguments.size() != 3) {
 					obj.wrongNumber();
@@ -723,7 +751,7 @@ public class client
 				}
 				
 				break;
-/*
+
 			case 20: // reserve an Itinerary
 				if (arguments.size() < 7) {
 					obj.wrongNumber();
@@ -754,17 +782,34 @@ public class client
 					Room = obj
 							.getBoolean(arguments.elementAt(arguments.size() - 1));
 
-					if (rm.itinerary(Id, customer, flightNumbers, location,
-							Car, Room))
+					
+					
+					String method = "itenerary";
+					ArrayList<Object> array = new ArrayList<Object>();
+					array.add(method);
+					array.add(Id);
+					array.add(customer);
+					array.add(flightNumbers);
+					array.add(location);
+					array.add(Car);
+					array.add(Room);
+					oos.writeObject(array);
+					if(is.readBoolean())
+					{
 						System.out.println("Itinerary Reserved");
+					}
 					else
-						System.out.println("Itinerary could not be reserved.");
+					{
+						System.out.println("Itinerary could not be reserved");
+					}
+					
+					
 				} catch (Exception e) {
 					System.out.println("EXCEPTION:");
 					System.out.println(e.getMessage());
 					e.printStackTrace();
 				}
-				break;*/
+				break;
 
 			case 21: // quit the client
 				if (arguments.size() != 1) {
