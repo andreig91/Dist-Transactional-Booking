@@ -46,6 +46,7 @@ public class server
 		{
 			System.out.println(e);
 		}
+		
 		System.out.println("The server started. To stop it press <CTRL><C>.");
 
 		while (true)

@@ -15,7 +15,8 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Vector;
 
-
+import LockManager.DeadlockException;
+import LockManager.LockManager;
 
 public class ResourceManagerImpl extends Thread implements ResourceManager
 {
@@ -41,6 +42,7 @@ public class ResourceManagerImpl extends Thread implements ResourceManager
 	ObjectOutputStream hOs;
 	ArrayList<Object> array;
 	ArrayList<Object> outArray;
+	LockManager lock = new LockManager();
 	
 	public ResourceManagerImpl(Socket client,String rmF,int rmFPort,String rmC,int rmCPort,String rmH,int rmHPort) 
 	{
@@ -139,18 +141,42 @@ public class ResourceManagerImpl extends Thread implements ResourceManager
 	// Reads a data item
 	private RMItem readData( int id, String key )
 	{
+		try
+		{
+			lock.Lock(id, key, LockManager.READ);
+		}
+		catch(DeadlockException deadLock)
+		{
+			
+		}
 		return MwHashTable.readData(id, key);			
 	}
 
 	// Writes a data item
 	private void writeData( int id, String key, RMItem value )
 	{
+		try
+		{
+			lock.Lock(id, key, LockManager.WRITE);
+		}
+		catch(DeadlockException deadLock)
+		{
+			
+		}
 		MwHashTable.writeData(id, key, value);
 	}
 
 	// Remove the item out of storage
 	protected RMItem removeData(int id, String key)
 	{
+		try
+		{
+			lock.Lock(id, key, LockManager.WRITE);
+		}
+		catch(DeadlockException deadLock)
+		{
+			
+		}
 		return MwHashTable.removeData(id, key);
 	}
 

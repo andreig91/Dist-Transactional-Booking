@@ -10,11 +10,15 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Vector;
 
+import LockManager.DeadlockException;
+import LockManager.LockManager;
+
 public class ResourceManagerImpl extends Thread implements ResourceManager
 {
 	ObjectInputStream iis;
 	DataOutputStream os;
 	Socket clientSocket = null;
+	LockManager lock = new LockManager();
 
 	public ResourceManagerImpl(Socket client) 
 	{
@@ -78,6 +82,14 @@ public class ResourceManagerImpl extends Thread implements ResourceManager
 	// Reads a data item
 	private RMItem readData( int id, String key )
 	{
+		try
+		{
+			lock.Lock(id, key, LockManager.READ);
+		}
+		catch(DeadlockException deadLock)
+		{
+			
+		}
 		if(key.charAt(0) == 'f')
 		{
 			return FlightHashTable.readData(id, key);
@@ -96,6 +108,14 @@ public class ResourceManagerImpl extends Thread implements ResourceManager
 	// Writes a data item
 	private void writeData( int id, String key, RMItem value )
 	{
+		try
+		{
+			lock.Lock(id, key, LockManager.WRITE);
+		}
+		catch(DeadlockException deadLock)
+		{
+			
+		}
 		if(key.charAt(0) == 'f')
 		{
 			FlightHashTable.writeData(id, key, value);
@@ -113,6 +133,14 @@ public class ResourceManagerImpl extends Thread implements ResourceManager
 	// Remove the item out of storage
 	protected RMItem removeData(int id, String key)
 	{
+		try
+		{
+			lock.Lock(id, key, LockManager.WRITE);
+		}
+		catch(DeadlockException deadLock)
+		{
+			
+		}
 		if(key.charAt(0) == 'f')
 		{
 			return FlightHashTable.removeData(id, key);
