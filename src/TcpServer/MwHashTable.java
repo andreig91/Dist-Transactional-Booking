@@ -2,7 +2,6 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import ResImpl.RMHashtable;
 
 public class MwHashTable
 {
@@ -68,9 +67,15 @@ public class MwHashTable
 				writeData(id, key, (RMItem)table.get(key));
 			}
 		}
+		removeRecoveryInfo(id);
 	}
 	
 	public static void commit(int id)
+	{
+		removeRecoveryInfo(id);
+	}
+	
+	public static void removeRecoveryInfo(int id)
 	{
 		RMHashtable table;
 		if(recoveryMap.containsKey(id))
@@ -78,6 +83,4 @@ public class MwHashTable
 			recoveryMap.remove(id);
 		}
 	}
-	
-	public static 
 }

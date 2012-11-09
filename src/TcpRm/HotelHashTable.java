@@ -1,4 +1,7 @@
+import java.util.Enumeration;
 import java.util.HashMap;
+
+import TcpServer.RMHashtable;
 
 public class HotelHashTable 
 {
@@ -49,5 +52,35 @@ public class HotelHashTable
 			table.put(key, readData(id, key));
 		}
 		recoveryMap.put(id, table);
+	}
+	
+	public static void abort(int id)
+	{
+		RMHashtable table;
+		if(recoveryMap.containsKey(id))
+		{
+			table = recoveryMap.get(id);
+			Enumeration<String> enumKey = table.keys();
+			while(enumKey.hasMoreElements())
+			{
+				String key = enumKey.nextElement();
+				writeData(id, key, (RMItem)table.get(key));
+			}
+		}
+		removeRecoveryInfo(id);
+	}
+	
+	public static void commit(int id)
+	{
+		removeRecoveryInfo(id);
+	}
+	
+	public static void removeRecoveryInfo(int id)
+	{
+		RMHashtable table;
+		if(recoveryMap.containsKey(id))
+		{
+			recoveryMap.remove(id);
+		}
 	}
 }
