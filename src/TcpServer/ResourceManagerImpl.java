@@ -15,6 +15,8 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Vector;
 
+import javax.sql.rowset.spi.TransactionalWriter;
+
 import LockManager.DeadlockException;
 import LockManager.LockManager;
 
@@ -43,6 +45,7 @@ public class ResourceManagerImpl extends Thread implements ResourceManager
 	ArrayList<Object> array;
 	ArrayList<Object> outArray;
 	LockManager lock = new LockManager();
+	int myId;
 	
 	public ResourceManagerImpl(Socket client,String rmF,int rmFPort,String rmC,int rmCPort,String rmH,int rmHPort) 
 	{
@@ -144,12 +147,12 @@ public class ResourceManagerImpl extends Thread implements ResourceManager
 		try
 		{
 			lock.Lock(id, key, LockManager.READ);
+			return MwHashTable.readData(id, key);
 		}
 		catch(DeadlockException deadLock)
 		{
-			
-		}
-		return MwHashTable.readData(id, key);			
+			TransactionManager.abort(myId);
+		}			
 	}
 
 	// Writes a data item
@@ -158,12 +161,13 @@ public class ResourceManagerImpl extends Thread implements ResourceManager
 		try
 		{
 			lock.Lock(id, key, LockManager.WRITE);
+			MwHashTable.writeData(id, key, value);
 		}
 		catch(DeadlockException deadLock)
 		{
 			
 		}
-		MwHashTable.writeData(id, key, value);
+		
 	}
 
 	// Remove the item out of storage
@@ -172,12 +176,12 @@ public class ResourceManagerImpl extends Thread implements ResourceManager
 		try
 		{
 			lock.Lock(id, key, LockManager.WRITE);
+			return MwHashTable.removeData(id, key);
 		}
 		catch(DeadlockException deadLock)
 		{
 			
 		}
-		return MwHashTable.removeData(id, key);
 	}
 
 
@@ -741,7 +745,21 @@ public class ResourceManagerImpl extends Thread implements ResourceManager
 	public boolean reflector(ArrayList<Object> array, DataOutputStream os) throws IOException
 	{
 		Object[] argument = array.toArray();
-		if(((String) argument[0]).equals("addFlight"))
+		if(((String) argument[0]).equals("start"))
+		{
+			int id = TransactionManager.start();
+			myId = id;
+			os.writeInt(id);
+		}
+		else if(((String) argument[0]).equals("commit"))
+		{
+			TransactionManager.commit(myId);
+		}
+		else if(((String) argument[0]).equals("abort"))
+		{
+			TransactionManager.commit(myId);
+		}
+		else if(((String) argument[0]).equals("addFlight"))
 		{
 			boolean ret = addFlight(((Integer) argument[1]).intValue(), ((Integer) argument[2]).intValue(), ((Integer) argument[3]).intValue(), ((Integer) argument[4]).intValue());
 			os.writeBoolean(ret);

@@ -18,6 +18,7 @@ public class ResourceManagerImpl extends Thread implements ResourceManager
 	DataOutputStream os;
 	Socket clientSocket = null;
 	LockManager lock = new LockManager();
+	int myId;
 
 	public ResourceManagerImpl(Socket client) 
 	{
@@ -83,25 +84,24 @@ public class ResourceManagerImpl extends Thread implements ResourceManager
 	{
 		try
 		{
-			lock.Lock(id, key, LockManager.READ);
+			lock.Lock(myId, key, LockManager.READ);
+			if(key.charAt(0) == 'f')
+			{
+				return FlightHashTable.readData(myId, key);
+			}
+			else if(key.charAt(0) == 'c')
+			{
+				return CarHashTable.readData(myId, key);
+			}
+			else
+			{
+				return HotelHashTable.readData(myId, key);
+			}
 		}
 		catch(DeadlockException deadLock)
 		{
 			
 		}
-		if(key.charAt(0) == 'f')
-		{
-			return FlightHashTable.readData(id, key);
-		}
-		else if(key.charAt(0) == 'c')
-		{
-			return CarHashTable.readData(id, key);
-		}
-		else
-		{
-			return HotelHashTable.readData(id, key);
-		}
-		
 	}
 
 	// Writes a data item
@@ -109,23 +109,25 @@ public class ResourceManagerImpl extends Thread implements ResourceManager
 	{
 		try
 		{
-			lock.Lock(id, key, LockManager.WRITE);
+			lock.Lock(myId, key, LockManager.WRITE);
+		
+		
+		if(key.charAt(0) == 'f')
+		{
+			FlightHashTable.writeData(myId, key, value);
+		}
+		else if(key.charAt(0) == 'c')
+		{
+			CarHashTable.writeData(myId, key, value);
+		}
+		else
+		{
+			HotelHashTable.writeData(myId, key, value);
+		}
 		}
 		catch(DeadlockException deadLock)
 		{
 			
-		}
-		if(key.charAt(0) == 'f')
-		{
-			FlightHashTable.writeData(id, key, value);
-		}
-		else if(key.charAt(0) == 'c')
-		{
-			CarHashTable.writeData(id, key, value);
-		}
-		else
-		{
-			HotelHashTable.writeData(id, key, value);
 		}
 	}
 
@@ -134,7 +136,7 @@ public class ResourceManagerImpl extends Thread implements ResourceManager
 	{
 		try
 		{
-			lock.Lock(id, key, LockManager.WRITE);
+			lock.Lock(myId, key, LockManager.WRITE);
 		}
 		catch(DeadlockException deadLock)
 		{
@@ -142,15 +144,15 @@ public class ResourceManagerImpl extends Thread implements ResourceManager
 		}
 		if(key.charAt(0) == 'f')
 		{
-			return FlightHashTable.removeData(id, key);
+			return FlightHashTable.removeData(myId, key);
 		}
 		else if(key.charAt(0) == 'c')
 		{
-			return CarHashTable.removeData(id, key);
+			return CarHashTable.removeData(myId, key);
 		}
 		else
 		{
-			return HotelHashTable.removeData(id, key);
+			return HotelHashTable.removeData(myId, key);
 		}
 	}
 
@@ -594,6 +596,10 @@ public class ResourceManagerImpl extends Thread implements ResourceManager
 			boolean ret = addFlight(((Integer) argument[1]).intValue(), ((Integer) argument[2]).intValue(), ((Integer) argument[3]).intValue(), ((Integer) argument[4]).intValue());
 			os.writeBoolean(ret);
 			return true;
+		}
+		else if(((String) argument[0]).equals("Id"))
+		{
+			myId = (Integer)argument[1];
 		}
 		else if(((String) argument[0]).equals("addCar"))
 		{
