@@ -754,10 +754,12 @@ public class ResourceManagerImpl extends Thread implements ResourceManager
 		else if(((String) argument[0]).equals("commit"))
 		{
 			TransactionManager.commit(myId);
+			return true;
 		}
 		else if(((String) argument[0]).equals("abort"))
 		{
 			TransactionManager.commit(myId);
+			return true;
 		}
 		else if(((String) argument[0]).equals("addFlight"))
 		{
