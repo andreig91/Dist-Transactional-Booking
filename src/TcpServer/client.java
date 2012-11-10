@@ -210,6 +210,10 @@ public class client {
 					array.add(method);
 					array.add(Id);
 					oos.writeObject(array);
+					if(!is.readBoolean()){
+						deadLock();
+						continue;
+					}
 
 					System.out.println("new customer id: " + is.readInt());
 
@@ -897,6 +901,11 @@ public class client {
 				}// end of switch
 			}// end of while(true)
 		}
+	
+	public static void deadLock(){
+		System.out.println("deadlock detected..aborting");
+		
+	}
 
 		public Vector parse(String command) {
 			Vector arguments = new Vector();
