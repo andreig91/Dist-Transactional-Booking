@@ -847,6 +847,32 @@ public class client {
 					e.printStackTrace();
 				}
 				break;
+				
+			case 26: //shutdown()
+				if (arguments.size() != 1) {
+					obj.wrongNumber();
+					break;
+				}
+				try {
+					ArrayList<Object> array = new ArrayList<Object>();
+					String quit = "shutdown";
+					array.add(quit);
+					oos.writeObject(array);
+					try {
+						Thread.sleep(1000);
+					} catch (Exception e) {
+
+					}
+					is.close();
+					clientSocket.close();
+				} catch (UnknownHostException e) {
+					System.err.println("Trying to connect to unknown host: "
+							+ e);
+				} catch (IOException e) {
+					System.err.println("IOException: " + e);
+				}
+				System.out.println("Quitting client.");
+				System.exit(1);
 
 			default:
 				System.out
@@ -919,6 +945,8 @@ public class client {
 			return 24;
 		else if (argument.compareToIgnoreCase("abort") == 0)
 			return 25;
+		else if (argument.compareToIgnoreCase("shutdown") == 0)
+			return 26;
 		else
 			return 666;
 

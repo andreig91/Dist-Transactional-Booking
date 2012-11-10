@@ -98,6 +98,7 @@ public class MwImpl extends Thread implements Mw {
 			if (array != null) {
 				if (((String) array.get(0)).compareToIgnoreCase("quit") == 0) {
 					System.out.println("Client disconnected");
+					
 					break;
 				}
 				try {
@@ -761,7 +762,46 @@ public class MwImpl extends Thread implements Mw {
 
 			os.writeBoolean(ret);
 			return true;
-		} else if (((String) argument[0]).equals("addFlight")) {
+		}
+		else if(((String) argument[0]).equals("shutdown")){
+			try {
+				ArrayList<Object> array1 = new ArrayList<Object>();
+				String shutdown = "shutdown";
+				array1.add(shutdown);
+				fOs.writeObject(array1);
+				cOs.writeObject(array1);
+				hOs.writeObject(array1);
+				
+				try {
+					Thread.sleep(1000);
+				} catch (Exception e) {
+
+				}
+				iis.close();
+				os.close();
+				oos.close();
+				fOs.close();
+				cOs.close();
+				hOs.close();
+				fIs.close();
+				cIs.close();
+				hIs.close();
+				fSocket.close();
+				cSocket.close();
+				hSocket.close();
+				
+				clientSocket.close();
+			} catch (UnknownHostException e) {
+				System.err.println("Trying to connect to unknown host: "
+						+ e);
+			} catch (IOException e) {
+				System.err.println("IOException: " + e);
+			}
+			System.out.println("Quitting middleware.");
+			System.exit(1);
+			return true;
+		}
+		else if (((String) argument[0]).equals("addFlight")) {
 			boolean ret = addFlight(((Integer) argument[1]).intValue(),
 					((Integer) argument[2]).intValue(),
 					((Integer) argument[3]).intValue(),

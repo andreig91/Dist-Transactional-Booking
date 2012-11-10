@@ -4,6 +4,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Enumeration;
@@ -688,6 +689,18 @@ public class RmImpl extends Thread implements Rm {
 			myId = ((Integer)argument[1]).intValue();
 			os.writeBoolean(true);
 			return true;
+		}
+
+		else if(((String) argument[0]).equals("shutdown")) {
+			iis.close();
+			os.close();
+
+			clientSocket.close();
+
+			System.out.println("Quitting rm.");
+			System.exit(1);
+			return true;
+
 		}
 
 		else {
