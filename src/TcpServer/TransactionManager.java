@@ -1,12 +1,12 @@
 package TcpServer;
 
-import java.util.HashMap;
 import java.util.Random;
 import java.util.Vector;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class TransactionManager {
 
-	static HashMap<Integer, Vector> map = new HashMap<Integer, Vector>();
+	static ConcurrentHashMap<Integer, Vector> map = new ConcurrentHashMap<Integer, Vector>();
 
 	static int start() {
 		int id = 1;
@@ -17,6 +17,10 @@ public class TransactionManager {
 		return id;
 	}
 
+	static boolean transactionsLeft()
+	{
+		return 	map.keySet().size() > 0;
+	}
 	static void enlist(int id, String rm) {
 		Vector aVector;
 		if (map.containsKey(id)) {

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd $HOME/workspace/rm/src/TcpServer
+cd $HOME/rm/src/TcpServer
 rm -f *.class
 cd ../LockManager 
 rm -f *.class
