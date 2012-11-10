@@ -764,6 +764,8 @@ public class MwImpl extends Thread implements Mw {
 			return true;
 		}
 		else if(((String) argument[0]).equals("shutdown")){
+			
+			
 			if(!TransactionManager.transactionsLeft())
 			{
 				try {
@@ -773,7 +775,7 @@ public class MwImpl extends Thread implements Mw {
 					fOs.writeObject(array1);
 					cOs.writeObject(array1);
 					hOs.writeObject(array1);
-					
+					os.writeBoolean(true);
 					try {
 						Thread.sleep(1000);
 					} catch (Exception e) {
