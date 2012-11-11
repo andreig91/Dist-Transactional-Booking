@@ -45,7 +45,11 @@ public class RmImpl extends Thread implements Rm {
 					break;
 				}
 				try {
-					boolean ret = reflector(array, os);
+					boolean ret=true;
+					try{
+					ret = reflector(array, os);
+					}
+					catch(DeadlockException e){}
 					if (ret) {
 						System.out.println("Threaded operation Worked!");
 					} else {
@@ -60,7 +64,7 @@ public class RmImpl extends Thread implements Rm {
 	}
 
 	// Reads a data item
-	private RMItem readData(int id, String key) {
+	private RMItem readData(int id, String key) throws DeadlockException{
 		try {
 			if (lock.Lock(myId, key, LockManager.READ)==true){
 				if (key.charAt(0) == 'f') {
@@ -76,12 +80,13 @@ public class RmImpl extends Thread implements Rm {
 			}
 		} catch (DeadlockException deadLock) {
 			System.out.println("deadlock....");
+			throw deadLock;
 		}
 		return null;
 	}
 
 	// Writes a data item
-	private void writeData(int id, String key, RMItem value) {
+	private void writeData(int id, String key, RMItem value) throws DeadlockException{
 		try {
 			if (lock.Lock(myId, key, LockManager.WRITE)==true){
 				if (key.charAt(0) == 'f') {
@@ -97,11 +102,12 @@ public class RmImpl extends Thread implements Rm {
 			}
 		} catch (DeadlockException deadLock) {
 			System.out.println("deadlock....");
+			throw deadLock;
 		}
 	}
 
 	// Remove the item out of storage
-	protected RMItem removeData(int id, String key) {
+	protected RMItem removeData(int id, String key) throws DeadlockException{
 		try {
 			if( lock.Lock(myId, key, LockManager.WRITE)==true){
 				if (key.charAt(0) == 'f') {
@@ -117,12 +123,13 @@ public class RmImpl extends Thread implements Rm {
 			}
 		} catch (DeadlockException deadLock) {
 			System.out.println("deadlock....");
+			throw deadLock;
 		}
 		return null;
 	}
 
 	// deletes the entire item
-	protected boolean deleteItem(int id, String key) {
+	protected boolean deleteItem(int id, String key) throws DeadlockException{
 		Trace.info("RM::deleteItem(" + id + ", " + key + ") called");
 		ReservableItem curObj = (ReservableItem) readData(id, key);
 		// Check if there is such an item in the storage
@@ -148,7 +155,7 @@ public class RmImpl extends Thread implements Rm {
 	}
 
 	// query the number of available seats/rooms/cars
-	protected int queryNum(int id, String key) {
+	protected int queryNum(int id, String key) throws DeadlockException{
 		Trace.info("RM::queryNum(" + id + ", " + key + ") called");
 		ReservableItem curObj = (ReservableItem) readData(id, key);
 		int value = 0;
@@ -161,7 +168,7 @@ public class RmImpl extends Thread implements Rm {
 	}
 
 	// query the price of an item
-	protected int queryPrice(int id, String key) {
+	protected int queryPrice(int id, String key) throws DeadlockException{
 		Trace.info("RM::queryCarsPrice(" + id + ", " + key + ") called");
 		ReservableItem curObj = (ReservableItem) readData(id, key);
 		int value = 0;
@@ -175,7 +182,7 @@ public class RmImpl extends Thread implements Rm {
 
 	// reserve an item
 	protected int reserveItem(int id, int customerID, String key,
-			String location) throws IOException {
+			String location) throws IOException, DeadlockException {
 		Trace.info("RM::reserveItem( " + id + ", customer=" + customerID + ", "
 				+ key + ", " + location + " ) called");
 		// Read customer object if it exists (and read lock it)
@@ -211,7 +218,7 @@ public class RmImpl extends Thread implements Rm {
 
 	// reserve an item
 	public int reserveItemHelper(int id, int customerID, String key,
-			String location) throws IOException {
+			String location) throws IOException, DeadlockException {
 		Trace.info("RM::reserveItem( " + id + ", customer=" + customerID + ", "
 				+ key + ", " + location + " ) called");
 		// Read customer object if it exists (and read lock it)
@@ -249,7 +256,7 @@ public class RmImpl extends Thread implements Rm {
 	// NOTE: if flightPrice <= 0 and the flight already exists, it maintains its
 	// current price
 	public boolean addFlight(int id, int flightNum, int flightSeats,
-			int flightPrice) throws IOException {
+			int flightPrice) throws IOException, DeadlockException {
 		Trace.info("RM::addFlight(" + id + ", " + flightNum + ", $"
 				+ flightPrice + ", " + flightSeats + ") called");
 		Flight curObj = (Flight) readData(id, Flight.getKey(flightNum));
@@ -274,7 +281,7 @@ public class RmImpl extends Thread implements Rm {
 		return (true);
 	}
 
-	public boolean deleteFlight(int id, int flightNum) throws IOException {
+	public boolean deleteFlight(int id, int flightNum) throws IOException, DeadlockException {
 		return deleteItem(id, Flight.getKey(flightNum));
 	}
 
@@ -282,7 +289,7 @@ public class RmImpl extends Thread implements Rm {
 	// NOTE: if price <= 0 and the room location already exists, it maintains
 	// its current price
 	public boolean addRooms(int id, String location, int count, int price)
-			throws IOException {
+			throws IOException, DeadlockException {
 		Trace.info("RM::addRooms(" + id + ", " + location + ", " + count
 				+ ", $" + price + ") called");
 		Hotel curObj = (Hotel) readData(id, Hotel.getKey(location));
@@ -307,7 +314,7 @@ public class RmImpl extends Thread implements Rm {
 	}
 
 	// Delete rooms from a location
-	public boolean deleteRooms(int id, String location) {
+	public boolean deleteRooms(int id, String location) throws DeadlockException{
 		return deleteItem(id, Hotel.getKey(location));
 	}
 
@@ -315,7 +322,7 @@ public class RmImpl extends Thread implements Rm {
 	// NOTE: if price <= 0 and the location already exists, it maintains its
 	// current price
 	public boolean addCars(int id, String location, int count, int price)
-			throws IOException {
+			throws IOException, DeadlockException {
 		Trace.info("RM::addCars(" + id + ", " + location + ", " + count + ", $"
 				+ price + ") called");
 		Car curObj = (Car) readData(id, Car.getKey(location));
@@ -340,37 +347,37 @@ public class RmImpl extends Thread implements Rm {
 	}
 
 	// Delete cars from a location
-	public boolean deleteCars(int id, String location) throws IOException {
+	public boolean deleteCars(int id, String location) throws IOException, DeadlockException {
 		return deleteItem(id, Car.getKey(location));
 	}
 
 	// Returns the number of empty seats on this flight
-	public int queryFlight(int id, int flightNum) throws IOException {
+	public int queryFlight(int id, int flightNum) throws IOException, DeadlockException {
 		return queryNum(id, Flight.getKey(flightNum));
 	}
 
 	// Returns price of this flight
-	public int queryFlightPrice(int id, int flightNum) throws IOException {
+	public int queryFlightPrice(int id, int flightNum) throws IOException, DeadlockException {
 		return queryPrice(id, Flight.getKey(flightNum));
 	}
 
 	// Returns the number of rooms available at a location
-	public int queryRooms(int id, String location) throws IOException {
+	public int queryRooms(int id, String location) throws IOException, DeadlockException {
 		return queryNum(id, Hotel.getKey(location));
 	}
 
 	// Returns room price at this location
-	public int queryRoomsPrice(int id, String location) throws IOException {
+	public int queryRoomsPrice(int id, String location) throws IOException, DeadlockException {
 		return queryPrice(id, Hotel.getKey(location));
 	}
 
 	// Returns the number of cars available at a location
-	public int queryCars(int id, String location) throws IOException {
+	public int queryCars(int id, String location) throws IOException, DeadlockException {
 		return queryNum(id, Car.getKey(location));
 	}
 
 	// Returns price of cars at this location
-	public int queryCarsPrice(int id, String location) throws IOException {
+	public int queryCarsPrice(int id, String location) throws IOException, DeadlockException {
 		return queryPrice(id, Car.getKey(location));
 	}
 
@@ -380,7 +387,7 @@ public class RmImpl extends Thread implements Rm {
 	// has no
 	// reservations.
 	public RMHashtable getCustomerReservations(int id, int customerID)
-			throws IOException {
+			throws IOException, DeadlockException {
 		Trace.info("RM::getCustomerReservations(" + id + ", " + customerID
 				+ ") called");
 		Customer cust = (Customer) readData(id, Customer.getKey(customerID));
@@ -394,7 +401,7 @@ public class RmImpl extends Thread implements Rm {
 	}
 
 	// return a bill
-	public String queryCustomerInfo(int id, int customerID) throws IOException {
+	public String queryCustomerInfo(int id, int customerID) throws IOException, DeadlockException {
 		Trace.info("RM::queryCustomerInfo(" + id + ", " + customerID
 				+ ") called");
 		Customer cust = (Customer) readData(id, Customer.getKey(customerID));
@@ -415,7 +422,7 @@ public class RmImpl extends Thread implements Rm {
 	// customer functions
 	// new customer just returns a unique customer identifier
 
-	public int newCustomer(int id) throws IOException {
+	public int newCustomer(int id) throws IOException, DeadlockException {
 		Trace.info("INFO: RM::newCustomer(" + id + ") called");
 		// Generate a globally unique ID for the new customer
 		int cid = Integer.parseInt(String.valueOf(id)
@@ -429,7 +436,7 @@ public class RmImpl extends Thread implements Rm {
 	}
 
 	// I opted to pass in customerID instead. This makes testing easier
-	public boolean newCustomer(int id, int customerID) throws IOException {
+	public boolean newCustomer(int id, int customerID) throws IOException, DeadlockException {
 		Trace.info("INFO: RM::newCustomer(" + id + ", " + customerID
 				+ ") called");
 		Customer cust = (Customer) readData(id, Customer.getKey(customerID));
@@ -448,7 +455,7 @@ public class RmImpl extends Thread implements Rm {
 
 	//
 	public boolean removeReservation(int id, String key, int count)
-			throws IOException {
+			throws IOException, DeadlockException {
 		Trace.info("RM::removeReservation(" + id + ", " + key + ", " + count
 				+ ") called");
 		ReservableItem item = (ReservableItem) readData(id, key);
@@ -467,7 +474,7 @@ public class RmImpl extends Thread implements Rm {
 	}
 
 	// Deletes customer from the database.
-	public boolean deleteCustomer(int id, int customerID) throws IOException {
+	public boolean deleteCustomer(int id, int customerID) throws IOException, DeadlockException {
 		Trace.info("RM::deleteCustomer(" + id + ", " + customerID + ") called");
 		Customer cust = (Customer) readData(id, Customer.getKey(customerID));
 		if (cust == null) {
@@ -506,21 +513,21 @@ public class RmImpl extends Thread implements Rm {
 
 	// Adds car reservation to this customer.
 	public boolean reserveCar(int id, int customerID, String location)
-			throws IOException {
+			throws IOException, DeadlockException {
 		// return reserveItem(id, customerID, Car.getKey(location), location);
 		return true;
 	}
 
 	// Adds room reservation to this customer.
 	public boolean reserveRoom(int id, int customerID, String location)
-			throws IOException {
+			throws IOException, DeadlockException {
 		// return reserveItem(id, customerID, Hotel.getKey(location), location);
 		return true;
 	}
 
 	// Adds flight reservation to this customer.
 	public boolean reserveFlight(int id, int customerID, int flightNum)
-			throws IOException {
+			throws IOException, DeadlockException {
 		// return reserveItem(id, customerID, Flight.getKey(flightNum),
 		// String.valueOf(flightNum));
 		return true;
@@ -528,7 +535,7 @@ public class RmImpl extends Thread implements Rm {
 
 	/* reserve an itinerary */
 	public boolean itinerary(int id, int customer, Vector flightNumbers,
-			String location, boolean Car, boolean Room) throws IOException {
+			String location, boolean Car, boolean Room) throws IOException, DeadlockException {
 		return false;
 	}
 
@@ -541,13 +548,21 @@ public class RmImpl extends Thread implements Rm {
 	}
 
 	public boolean reflector(ArrayList<Object> array, DataOutputStream os)
-			throws IOException {
+			throws IOException, DeadlockException {
 		Object[] argument = array.toArray();
 		if (((String) argument[0]).equals("addFlight")) {
-			boolean ret = addFlight(((Integer) argument[1]).intValue(),
+			boolean ret;
+			try{
+			ret = addFlight(((Integer) argument[1]).intValue(),
 					((Integer) argument[2]).intValue(),
 					((Integer) argument[3]).intValue(),
 					((Integer) argument[4]).intValue());
+			}catch(DeadlockException e){
+				os.writeBoolean(false);
+				System.out.println("Deadlock in RM, aborting");
+				return true;
+			}
+			os.writeBoolean(true);
 			os.writeBoolean(ret);
 			return true;
 		} else if (((String) argument[0]).equals("Id")) {

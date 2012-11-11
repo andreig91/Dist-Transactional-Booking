@@ -109,6 +109,12 @@ public class client {
 					array.add(flightSeats);
 					array.add(flightPrice);
 					oos.writeObject(array);
+					
+					if(!is.readBoolean()){
+						deadLock();
+						continue;
+					}
+					
 					if (is.readBoolean()) {
 						System.out.println("Flights were added");
 					} else {
@@ -343,6 +349,11 @@ public class client {
 					array.add(Id);
 					array.add(customer);
 					oos.writeObject(array);
+					
+					if(!is.readBoolean()){
+						deadLock();
+						continue;
+					}
 
 					if (is.readBoolean()) {
 						System.out.println("Customer Deleted");
@@ -764,6 +775,10 @@ public class client {
 					array.add(Id);
 					array.add(Cid);
 					oos.writeObject(array);
+					if(!is.readBoolean()){
+						deadLock();
+						continue;
+					}
 					if (is.readBoolean()) {
 						System.out.println("new customer id:" + Cid);
 					} else {
