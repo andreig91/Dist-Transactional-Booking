@@ -873,7 +873,6 @@ public class client {
 				break;
 
 			case 23: // start()
-				System.out.println("reached start()");
 				if (arguments.size() != 1) {
 					System.out.println("Wrong number of arguments");
 					obj.wrongNumber();
@@ -886,11 +885,7 @@ public class client {
 					oos.writeObject(array);
 					System.out.println("Sending start");
 					transactionID = is.readInt();
-					//if (is.readInt() != null) {
 					System.out.println("Transaction id:" + transactionID);
-					//	} else {
-					//			System.out.println("Customer could not be created");
-					//	}
 
 				} catch (Exception e) {
 					System.out.println("EXCEPTION:");

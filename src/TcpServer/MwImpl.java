@@ -123,7 +123,7 @@ public class MwImpl extends Thread implements Mw {
 
 				//	System.out.println(MwHashTable.readData(id, key));
 				System.out.println("putting a read lock on mw hash table");
-				return MwHashTable.readData(id, key);
+				return MwHashTable.readData(myId, key);
 			} 
 		}catch(DeadlockException e){
 			System.out.println("deadlock in mw-readdata");
@@ -137,7 +137,7 @@ public class MwImpl extends Thread implements Mw {
 		try{
 			if(lock.Lock(myId, key, LockManager.WRITE)){
 				System.out.println("putting a write lock on mw hash table");
-				MwHashTable.writeData(id, key, value);
+				MwHashTable.writeData(myId, key, value);
 			}
 		}
 		catch(DeadlockException e){
@@ -151,7 +151,7 @@ public class MwImpl extends Thread implements Mw {
 		try{
 			if(lock.Lock(myId, key, LockManager.WRITE)){
 				System.out.println("putting a write lock on mw hash table");
-				return MwHashTable.removeData(id, key);
+				return MwHashTable.removeData(myId, key);
 			}
 		}
 		catch(DeadlockException e){
@@ -688,7 +688,7 @@ public class MwImpl extends Thread implements Mw {
 	public boolean abort() throws IOException{
 		Vector ret = TransactionManager.abort(myId);
 		//NULL pointer exception here 
-		ALERT = WATCH out; 
+		//ALERT = WATCH out; 
 		//NULL pointer exception here
 		int size = ret.size();
 		boolean ret1= false;
@@ -698,19 +698,22 @@ public class MwImpl extends Thread implements Mw {
 
 		for(int i =0; i < size; i++){
 			if(((String)ret.elementAt(i)).equals("f")){ //flight
-				array1.add(i);
+				int code = 0;
+				array1.add(code);
 				fOs.writeObject(array1);
 				array1.remove(1);
 				ret1 = fIs.readBoolean();
 			}
 			else if(((String)ret.elementAt(i)).equals("h")){ //hotel
-				array1.add(i);
+				int code = 1;
+				array1.add(code);
 				hOs.writeObject(array1);
 				array1.remove(1);
 				ret1 = hIs.readBoolean();
 			}
 			else if(((String)ret.elementAt(i)).equals("c")){ //car
-				array1.add(i);
+				int code = 2;
+				array1.add(code);
 				cOs.writeObject(array1);
 				array1.remove(1);
 				ret1 = cIs.readBoolean();
@@ -723,7 +726,7 @@ public class MwImpl extends Thread implements Mw {
 		}
 
 		unlock(myId);
-		return ret1;
+		return true;
 
 	}
 
@@ -760,25 +763,28 @@ public class MwImpl extends Thread implements Mw {
 	
 				for(int i =0; i < size; i++){
 					if(((String)ret.elementAt(i)).equals("f")){ //flight
-						array1.add(i);
+						int code = 0;
+						array1.add(code);
 						fOs.writeObject(array1);
 						array1.remove(1);
 						ret1 = fIs.readBoolean();
 					}
 					else if(((String)ret.elementAt(i)).equals("h")){ //hotel
-						array1.add(i);
+						int code = 1;
+						array1.add(code);
 						hOs.writeObject(array1);
 						array1.remove(1);
 						ret1 = hIs.readBoolean();
 					}
 					else if(((String)ret.elementAt(i)).equals("c")){ //car
-						array1.add(i);
+						int code = 2;
+						array1.add(code);
 						cOs.writeObject(array1);
 						array1.remove(1);
 						ret1 = cIs.readBoolean();
 					}
 					else{
-						System.out.println("a problem in abort() mw");
+						System.out.println("a problem in commit() mw");
 						ret1 = false;
 					}
 	
@@ -795,7 +801,8 @@ public class MwImpl extends Thread implements Mw {
 			
 			
 		} else if (((String) argument[0]).equals("abort")) {
-			os.writeBoolean(abort());
+			abort();
+			os.writeBoolean(true);
 			return true;
 		}
 		else if(((String) argument[0]).equals("shutdown")){
