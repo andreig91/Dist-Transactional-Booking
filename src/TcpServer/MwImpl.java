@@ -687,6 +687,9 @@ public class MwImpl extends Thread implements Mw {
 
 	public boolean abort() throws IOException{
 		Vector ret = TransactionManager.abort(myId);
+		//NULL pointer exception here 
+		ALERT = WATCH out; 
+		//NULL pointer exception here
 		int size = ret.size();
 		boolean ret1= false;
 
@@ -747,40 +750,50 @@ public class MwImpl extends Thread implements Mw {
 		} else if (((String) argument[0]).equals("commit")) {
 
 			Vector ret = TransactionManager.commit(myId);
-			int size = ret.size();
-			boolean ret1= false;
-
-			ArrayList<Object> array1 = new ArrayList<Object>();
-			array1.add("commit");
-
-			for(int i =0; i < size; i++){
-				if(((String)ret.elementAt(i)).equals("f")){ //flight
-					array1.add(i);
-					fOs.writeObject(array1);
-					array1.remove(1);
-					ret1 = fIs.readBoolean();
+			if(ret != null)
+			{
+				int size = ret.size();
+				boolean ret1= false;
+	
+				ArrayList<Object> array1 = new ArrayList<Object>();
+				array1.add("commit");
+	
+				for(int i =0; i < size; i++){
+					if(((String)ret.elementAt(i)).equals("f")){ //flight
+						array1.add(i);
+						fOs.writeObject(array1);
+						array1.remove(1);
+						ret1 = fIs.readBoolean();
+					}
+					else if(((String)ret.elementAt(i)).equals("h")){ //hotel
+						array1.add(i);
+						hOs.writeObject(array1);
+						array1.remove(1);
+						ret1 = hIs.readBoolean();
+					}
+					else if(((String)ret.elementAt(i)).equals("c")){ //car
+						array1.add(i);
+						cOs.writeObject(array1);
+						array1.remove(1);
+						ret1 = cIs.readBoolean();
+					}
+					else{
+						System.out.println("a problem in abort() mw");
+						ret1 = false;
+					}
+	
 				}
-				else if(((String)ret.elementAt(i)).equals("h")){ //hotel
-					array1.add(i);
-					hOs.writeObject(array1);
-					array1.remove(1);
-					ret1 = hIs.readBoolean();
-				}
-				else if(((String)ret.elementAt(i)).equals("c")){ //car
-					array1.add(i);
-					cOs.writeObject(array1);
-					array1.remove(1);
-					ret1 = cIs.readBoolean();
-				}
-				else{
-					System.out.println("a problem in abort() mw");
-					ret1 = false;
-				}
-
+				os.writeBoolean(true);
+				unlock(myId);
+				return true;
 			}
-
-			unlock(myId);
-			return ret1;
+			else
+			{
+				os.writeBoolean(false);
+				return true;
+			}
+			
+			
 		} else if (((String) argument[0]).equals("abort")) {
 			os.writeBoolean(abort());
 			return true;

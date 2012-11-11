@@ -151,6 +151,10 @@ public class client {
 					array.add(numCars);
 					array.add(price);
 					oos.writeObject(array);
+					if(!is.readBoolean()){
+						deadLock();
+						continue;
+					}
 					if (is.readBoolean()) {
 						System.out.println("Cars added");
 					} else {
@@ -188,6 +192,10 @@ public class client {
 					array.add(numRooms);
 					array.add(price);
 					oos.writeObject(array);
+					if(!is.readBoolean()){
+						deadLock();
+						continue;
+					}
 					if (is.readBoolean()) {
 						System.out.println("Rooms added");
 					} else {
@@ -289,6 +297,10 @@ public class client {
 					array.add(Id);
 					array.add(location);
 					oos.writeObject(array);
+					if(!is.readBoolean()){
+						deadLock();
+						continue;
+					}
 					if (is.readBoolean()) {
 						System.out.println("Cars deleted");
 					} else {
@@ -322,6 +334,10 @@ public class client {
 					array.add(Id);
 					array.add(location);
 					oos.writeObject(array);
+					if(!is.readBoolean()){
+						deadLock();
+						continue;
+					}
 					if (is.readBoolean()) {
 						System.out.println("Rooms deleted");
 					} else {
@@ -428,6 +444,10 @@ public class client {
 					array.add(Id);
 					array.add(location);
 					oos.writeObject(array);
+					if(!is.readBoolean()){
+						deadLock();
+						continue;
+					}
 
 					System.out.println("number of Cars at this location: "
 							+ is.readInt());
@@ -459,6 +479,10 @@ public class client {
 					array.add(Id);
 					array.add(location);
 					oos.writeObject(array);
+					if(!is.readBoolean()){
+						deadLock();
+						continue;
+					}
 
 					System.out.println("number of Rooms at this location: "
 							+ is.readInt());
@@ -559,6 +583,10 @@ public class client {
 					array.add(Id);
 					array.add(location);
 					oos.writeObject(array);
+					if(!is.readBoolean()){
+						deadLock();
+						continue;
+					}
 
 					System.out.println("Price of a car at this location: "
 							+ is.readInt());
@@ -590,6 +618,10 @@ public class client {
 					array.add(Id);
 					array.add(location);
 					oos.writeObject(array);
+					if(!is.readBoolean()){
+						deadLock();
+						continue;
+					}
 
 					System.out.println("Price of Rooms at this location: "
 							+ is.readInt());
@@ -660,6 +692,10 @@ public class client {
 					array.add(customer);
 					array.add(location);
 					oos.writeObject(array);
+					if(!is.readBoolean()){
+						deadLock();
+						continue;
+					}
 					if (is.readBoolean()) {
 						System.out.println("Car reserved");
 					} else {
@@ -693,6 +729,10 @@ public class client {
 					array.add(customer);
 					array.add(location);
 					oos.writeObject(array);
+					if(!is.readBoolean()){
+						deadLock();
+						continue;
+					}
 					if (is.readBoolean()) {
 						System.out.println("Room reserved");
 					} else {
@@ -746,10 +786,23 @@ public class client {
 					array.add(Car);
 					array.add(Room);
 					oos.writeObject(array);
+					if(!is.readBoolean()){
+						deadLock();
+						continue;
+					}
 					if (is.readBoolean()) {
 						System.out.println("Itinerary Reserved");
 					} else {
 						System.out.println("Itinerary could not be reserved");
+						ArrayList<Object> array1 = new ArrayList<Object>();
+						String start = "abort";
+						array1.add(start);
+						oos.writeObject(array1);
+						if (is.readBoolean()) {
+							System.out.println("aborted because itinerary failed");
+						} else {
+							System.out.println("itinerary failed, aborting failed");
+						}
 					}
 
 				} catch (Exception e) {

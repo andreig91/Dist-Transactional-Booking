@@ -47,7 +47,7 @@ public class RmImpl extends Thread implements Rm {
 				try {
 					boolean ret=true;
 					try{
-					ret = reflector(array, os);
+						ret = reflector(array, os);
 					}
 					catch(DeadlockException e){}
 					if (ret) {
@@ -553,10 +553,10 @@ public class RmImpl extends Thread implements Rm {
 		if (((String) argument[0]).equals("addFlight")) {
 			boolean ret;
 			try{
-			ret = addFlight(((Integer) argument[1]).intValue(),
-					((Integer) argument[2]).intValue(),
-					((Integer) argument[3]).intValue(),
-					((Integer) argument[4]).intValue());
+				ret = addFlight(((Integer) argument[1]).intValue(),
+						((Integer) argument[2]).intValue(),
+						((Integer) argument[3]).intValue(),
+						((Integer) argument[4]).intValue());
 			}catch(DeadlockException e){
 				os.writeBoolean(false);
 				System.out.println("Deadlock in RM, aborting");
@@ -570,17 +570,34 @@ public class RmImpl extends Thread implements Rm {
 			System.out.println("New transaction started with transaction id: " + myId );
 			return true;
 		} else if (((String) argument[0]).equals("addCar")) {
-			boolean ret = addCars(((Integer) argument[1]).intValue(),
-					((String) argument[2]).toString(),
-					((Integer) argument[3]).intValue(),
-					((Integer) argument[4]).intValue());
+			boolean ret;
+			try{
+				ret = addCars(((Integer) argument[1]).intValue(),
+						((String) argument[2]).toString(),
+						((Integer) argument[3]).intValue(),
+						((Integer) argument[4]).intValue());
+			}catch(DeadlockException e){
+				os.writeBoolean(false);
+				System.out.println("Deadlock in RM, aborting");
+				return true;
+			}
+			os.writeBoolean(true);
 			os.writeBoolean(ret);
 			return true;
 		} else if (((String) argument[0]).equals("addRoom")) {
-			boolean ret = addRooms(((Integer) argument[1]).intValue(),
-					((String) argument[2]).toString(),
-					((Integer) argument[3]).intValue(),
-					((Integer) argument[4]).intValue());
+			boolean ret;
+			try{
+				ret = addRooms(((Integer) argument[1]).intValue(),
+						((String) argument[2]).toString(),
+						((Integer) argument[3]).intValue(),
+						((Integer) argument[4]).intValue());
+			}
+			catch(DeadlockException e){
+				os.writeBoolean(false);
+				System.out.println("Deadlock in RM, aborting");
+				return true;
+			}
+			os.writeBoolean(true);
 			os.writeBoolean(ret);
 			return true;
 		} else if (((String) argument[0]).equals("newcustomer")) {
@@ -595,8 +612,8 @@ public class RmImpl extends Thread implements Rm {
 		} else if (((String) argument[0]).equals("deleteFlight")) {
 			boolean ret;
 			try{
-			ret = deleteFlight(((Integer) argument[1]).intValue(),
-					((Integer) argument[2]).intValue());
+				ret = deleteFlight(((Integer) argument[1]).intValue(),
+						((Integer) argument[2]).intValue());
 			}
 			catch(DeadlockException e){
 				os.writeBoolean(false);
@@ -607,25 +624,50 @@ public class RmImpl extends Thread implements Rm {
 			os.writeBoolean(ret);
 			return true;
 		} else if (((String) argument[0]).equals("deleteCar")) {
-			boolean ret = deleteCars(((Integer) argument[1]).intValue(),
-					((String) argument[2]).toString());
+			boolean ret;
+			try{
+				ret = deleteCars(((Integer) argument[1]).intValue(),
+						((String) argument[2]).toString());
+			}
+			catch(DeadlockException e){
+				os.writeBoolean(false);
+				System.out.println("Deadlock in RM, aborting");
+				return true;
+			}
+			os.writeBoolean(true);
 			os.writeBoolean(ret);
 			return true;
 		} else if (((String) argument[0]).equals("deleteRoom")) {
-			boolean ret = deleteRooms(((Integer) argument[1]).intValue(),
-					((String) argument[2]).toString());
+			boolean ret;
+			try{
+				ret = deleteRooms(((Integer) argument[1]).intValue(),
+						((String) argument[2]).toString());
+			}catch(DeadlockException e){
+				os.writeBoolean(false);
+				System.out.println("Deadlock in RM, aborting");
+				return true;
+			}
+			os.writeBoolean(true);
 			os.writeBoolean(ret);
 			return true;
 		} else if (((String) argument[0]).equals("deleteCustomer")) {
-			boolean ret = deleteCustomer(((Integer) argument[1]).intValue(),
-					((Integer) argument[2]).intValue());
+			boolean ret;
+			try{
+				ret = deleteCustomer(((Integer) argument[1]).intValue(),
+						((Integer) argument[2]).intValue());
+			}catch(DeadlockException e){
+				os.writeBoolean(false);
+				System.out.println("Deadlock in RM, aborting");
+				return true;
+			}
+			os.writeBoolean(true);
 			os.writeBoolean(ret);
 			return true;
 		} else if (((String) argument[0]).equals("queryFlight")) {
 			int ret;
 			try{	
 				ret = queryFlight(((Integer) argument[1]).intValue(),
-					((Integer) argument[2]).intValue());
+						((Integer) argument[2]).intValue());
 			}catch(DeadlockException e){
 				os.writeBoolean(false);
 				System.out.println("Deadlock in RM, aborting");
@@ -635,26 +677,50 @@ public class RmImpl extends Thread implements Rm {
 			os.writeInt(ret);
 			return true;
 		} else if (((String) argument[0]).equals("queryCar")) {
-			int ret = queryCars(((Integer) argument[1]).intValue(),
-					((String) argument[2]).toString());
+			int ret;
+			try{
+				ret = queryCars(((Integer) argument[1]).intValue(),
+						((String) argument[2]).toString());
+			}catch(DeadlockException e){
+				os.writeBoolean(false);
+				System.out.println("Deadlock in RM, aborting");
+				return true;
+			}
+			os.writeBoolean(true);
 			os.writeInt(ret);
 			return true;
 		} else if (((String) argument[0]).equals("queryRoom")) {
-			int ret = queryRooms(((Integer) argument[1]).intValue(),
-					((String) argument[2]).toString());
+			int ret;
+			try{
+				ret = queryRooms(((Integer) argument[1]).intValue(),
+						((String) argument[2]).toString());
+			}catch(DeadlockException e){
+				os.writeBoolean(false);
+				System.out.println("Deadlock in RM, aborting");
+				return true;
+			}
+			os.writeBoolean(true);
 			os.writeInt(ret);
 			return true;
 		} else if (((String) argument[0]).equals("removeReservation")) {
-			boolean ret = removeReservation(((Integer) argument[1]).intValue(),
-					((String) argument[2]).toString(),
-					((Integer) argument[3]).intValue());
+			boolean ret;
+			try{
+				ret = removeReservation(((Integer) argument[1]).intValue(),
+						((String) argument[2]).toString(),
+						((Integer) argument[3]).intValue());}
+			catch(DeadlockException e){
+				os.writeBoolean(false);
+				System.out.println("Deadlock in RM, aborting");
+				return true;
+			}
+			os.writeBoolean(true);
 			os.writeBoolean(ret);
 			return true;
 		} else if (((String) argument[0]).equals("queryFlightPrice")) {
 			int ret;
 			try{
-			ret = queryFlightPrice(((Integer) argument[1]).intValue(),
-					((Integer) argument[2]).intValue());
+				ret = queryFlightPrice(((Integer) argument[1]).intValue(),
+						((Integer) argument[2]).intValue());
 			}
 			catch(DeadlockException e){
 				os.writeBoolean(false);
@@ -665,41 +731,91 @@ public class RmImpl extends Thread implements Rm {
 			os.writeInt(ret);
 			return true;
 		} else if (((String) argument[0]).equals("queryCarPrice")) {
-			int ret = queryCarsPrice(((Integer) argument[1]).intValue(),
-					((String) argument[2]).toString());
+			int ret;
+			try{
+				ret = queryCarsPrice(((Integer) argument[1]).intValue(),
+						((String) argument[2]).toString());}
+			catch(DeadlockException e){
+				os.writeBoolean(false);
+				System.out.println("Deadlock in RM, aborting");
+				return true;
+			}
+			os.writeBoolean(true);
 			os.writeInt(ret);
 			return true;
 		} else if (((String) argument[0]).equals("queryRoomPrice")) {
-			int ret = queryRoomsPrice(((Integer) argument[1]).intValue(),
-					((String) argument[2]).toString());
+			int ret;
+			try{
+				ret = queryRoomsPrice(((Integer) argument[1]).intValue(),
+						((String) argument[2]).toString());}
+			catch(DeadlockException e){
+				os.writeBoolean(false);
+				System.out.println("Deadlock in RM, aborting");
+				return true;
+			}
+			os.writeBoolean(true);
 			os.writeInt(ret);
 			return true;
 		} else if (((String) argument[0]).equals("reserveItemHelper")) {
-			int ret = reserveItemHelper(((Integer) argument[1]).intValue(),
-					((Integer) argument[2]).intValue(),
-					((String) argument[3]).toString(),
-					((String) argument[4]).toString());
+			int ret;
+			try{
+				ret = reserveItemHelper(((Integer) argument[1]).intValue(),
+						((Integer) argument[2]).intValue(),
+						((String) argument[3]).toString(),
+						((String) argument[4]).toString());
+			}
+			catch(DeadlockException e){
+				os.writeBoolean(false);
+				System.out.println("Deadlock in RM, aborting");
+				return true;
+			}
+			os.writeBoolean(true);
 			os.writeInt(ret);
 			return true;
 		} else if (((String) argument[0]).equals("reserveCar")) {
-			boolean ret = reserveCar(((Integer) argument[1]).intValue(),
-					((Integer) argument[2]).intValue(),
-					((String) argument[3]).toString());
+			boolean ret;
+			try{
+				ret = reserveCar(((Integer) argument[1]).intValue(),
+						((Integer) argument[2]).intValue(),
+						((String) argument[3]).toString());}
+			catch(DeadlockException e){
+				os.writeBoolean(false);
+				System.out.println("Deadlock in RM, aborting");
+				return true;
+			}
+			os.writeBoolean(true);
 			os.writeBoolean(ret);
 			return true;
 		} else if (((String) argument[0]).equals("reserveRoom")) {
-			boolean ret = reserveRoom(((Integer) argument[1]).intValue(),
-					((Integer) argument[2]).intValue(),
-					((String) argument[3]).toString());
+			boolean ret;
+			try{
+				ret = reserveRoom(((Integer) argument[1]).intValue(),
+						((Integer) argument[2]).intValue(),
+						((String) argument[3]).toString());}
+			catch(DeadlockException e){
+				os.writeBoolean(false);
+				System.out.println("Deadlock in RM, aborting");
+				return true;
+			}
+			os.writeBoolean(true);
 			os.writeBoolean(ret);
 			return true;
 		} else if (((String) argument[0]).equals("itinerary")) {
-			boolean ret = itinerary(((Integer) argument[1]).intValue(),
-					((Integer) argument[2]).intValue(),
-					((Vector<Integer>) argument[3]),
-					((String) argument[4]).toString(),
-					((Boolean) argument[5]).booleanValue(),
-					((Boolean) argument[6]).booleanValue());
+			boolean ret;
+
+			try{
+				ret = itinerary(((Integer) argument[1]).intValue(),
+						((Integer) argument[2]).intValue(),
+						((Vector<Integer>) argument[3]),
+						((String) argument[4]).toString(),
+						((Boolean) argument[5]).booleanValue(),
+						((Boolean) argument[6]).booleanValue());}
+			catch(DeadlockException e){
+				os.writeBoolean(false);
+				System.out.println("Deadlock in RM, aborting");
+				return true;
+			}
+			os.writeBoolean(true);
 			os.writeBoolean(ret);
 			return true;
 		} else if  (((String) argument[0]).equals("commit")) {
@@ -721,7 +837,7 @@ public class RmImpl extends Thread implements Rm {
 			return true;
 		} else if  (((String) argument[0]).equals("abort")) {
 			if(((Integer)argument[1]).intValue()==0){//flight
-			System.out.println("aborting flight Rm");
+				System.out.println("aborting flight Rm");
 				FlightHashTable.abort(myId);
 			}
 			else if(((Integer)argument[1]).intValue()==1){//room
