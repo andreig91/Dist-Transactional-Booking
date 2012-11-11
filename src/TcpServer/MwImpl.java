@@ -104,9 +104,9 @@ public class MwImpl extends Thread implements Mw {
 				try {
 					boolean ret = reflector(array, os);
 					if (ret) {
-						System.out.println("Threaded operation Worked!");
+						System.out.println(myId + "'s operation executed");
 					} else {
-						System.out.println("Threaded operation failed");
+						System.out.println(myId + "'s operation failed");
 					}
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -742,6 +742,7 @@ public class MwImpl extends Thread implements Mw {
 		if (((String) argument[0]).equals("start")) {
 			int id = TransactionManager.start();
 			myId = id;
+			System.out.println("New transaction started with id: " + myId);
 			ArrayList<Object> array1 = new ArrayList<Object>();
 			array1.add("start");
 			array1.add(myId);

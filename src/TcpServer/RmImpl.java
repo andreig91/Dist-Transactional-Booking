@@ -51,9 +51,9 @@ public class RmImpl extends Thread implements Rm {
 					}
 					catch(DeadlockException e){}
 					if (ret) {
-						System.out.println("Threaded operation Worked!");
+						System.out.println(myId + "'s operation executed");
 					} else {
-						System.out.println("Threaded operation failed");
+						System.out.println(myId + "'s operation failed");
 					}
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -900,7 +900,7 @@ public class RmImpl extends Thread implements Rm {
 
 		else if (((String) argument[0]).equals("start")) {
 			myId = ((Integer)argument[1]).intValue();
-			System.out.println("New transaction started with transaction id: " + myId );
+			System.out.println("New transaction started with id: " + myId );
 			os.writeBoolean(true);
 			return true;
 		}

@@ -983,6 +983,7 @@ public class client {
 				{
 					System.err.println("IOException: " + e);
 				}
+				break;
 				
 				default:
 					System.out
@@ -992,9 +993,9 @@ public class client {
 			}// end of while(true)
 		}
 	
-	public static void deadLock(){
-		System.out.println("deadlock detected..aborting");
-		
+	public static void deadLock()
+	{
+		System.out.println("Deadlock detected\n Transaction was ABORTED!");	
 	}
 
 		public Vector parse(String command) {
