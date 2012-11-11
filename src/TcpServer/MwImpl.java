@@ -170,58 +170,6 @@ public class MwImpl extends Thread implements Mw {
 			System.out.println("Unlock failed in the Mw");
 	}
 
-	// deletes the entire item
-	protected boolean deleteItem(int id, String key) throws DeadlockException{
-		Trace.info("RM::deleteItem(" + id + ", " + key + ") called");
-		ReservableItem curObj = (ReservableItem) readData(id, key);
-		// Check if there is such an item in the storage
-		if (curObj == null) {
-			Trace.warn("RM::deleteItem(" + id + ", " + key
-					+ ") failed--item doesn't exist");
-			return false;
-		} else {
-			if (curObj.getReserved() == 0) {
-				removeData(id, curObj.getKey());
-				Trace.info("RM::deleteItem(" + id + ", " + key
-						+ ") item deleted");
-				return true;
-			} else {
-				Trace.info("RM::deleteItem("
-						+ id
-						+ ", "
-						+ key
-						+ ") item can't be deleted because some customers reserved it");
-				return false;
-			}
-		} // if
-	}
-
-	// query the number of available seats/rooms/cars
-	protected int queryNum(int id, String key) throws DeadlockException{
-		Trace.info("RM::queryNum(" + id + ", " + key + ") called");
-		ReservableItem curObj = (ReservableItem) readData(id, key);
-		int value = 0;
-		if (curObj != null) {
-			value = curObj.getCount();
-		} // else
-		Trace.info("RM::queryNum(" + id + ", " + key + ") returns count="
-				+ value);
-		return value;
-	}
-
-	// query the price of an item
-	protected int queryPrice(int id, String key) throws DeadlockException {
-		Trace.info("RM::queryCarsPrice(" + id + ", " + key + ") called");
-		ReservableItem curObj = (ReservableItem) readData(id, key);
-		int value = 0;
-		if (curObj != null) {
-			value = curObj.getPrice();
-		} // else
-		Trace.info("RM::queryCarsPrice(" + id + ", " + key + ") returns cost=$"
-				+ value);
-		return value;
-	}
-
 	// reserve an item
 	protected boolean reserveItem(int id, int customerID, String key,
 			String location) throws IOException, DeadlockException {
@@ -244,12 +192,18 @@ public class MwImpl extends Thread implements Mw {
 		array.add(location);
 		if (key.charAt(0) == 'f') {
 			fOs.writeObject(array);
+			if(!fIs.readBoolean())
+				throw new DeadlockException(myId,"");
 			price = fIs.readInt();
 		} else if (key.charAt(0) == 'c') {
 			cOs.writeObject(array);
+			if(!cIs.readBoolean())
+				throw new DeadlockException(myId,"");
 			price = cIs.readInt();
 		} else {
 			hOs.writeObject(array);
+			if(!hIs.readBoolean())
+				throw new DeadlockException(myId,"");
 			price = hIs.readInt();
 		}
 		if (price == -1) {
@@ -306,7 +260,7 @@ public class MwImpl extends Thread implements Mw {
 	// NOTE: if price <= 0 and the room location already exists, it maintains
 	// its current price
 	public boolean addRooms(int id, String location, int count, int price)
-			throws IOException {
+			throws IOException, DeadlockException {
 		Trace.info("RM::addRooms(" + id + ", " + location + ", " + count
 				+ ", $" + price + ") called");
 		array = new ArrayList<Object>();
@@ -317,11 +271,13 @@ public class MwImpl extends Thread implements Mw {
 		array.add(count);
 		array.add(price);
 		hOs.writeObject(array);
+		if(!hIs.readBoolean())
+			throw new DeadlockException(myId,"");
 		return hIs.readBoolean();
 	}
 
 	// Delete rooms from a location
-	public boolean deleteRooms(int id, String location) throws IOException {
+	public boolean deleteRooms(int id, String location) throws IOException, DeadlockException {
 		Trace.info("RM::deleteRooms(" + id + ", " + location
 				+ ") called on middleware");
 		array = new ArrayList<Object>();
@@ -329,7 +285,8 @@ public class MwImpl extends Thread implements Mw {
 		array.add(method);
 		array.add(id);
 		array.add(location);
-		hOs.writeObject(array);
+		hOs.writeObject(array);if(!hIs.readBoolean())
+			throw new DeadlockException(myId,"");
 		return hIs.readBoolean();
 	}
 
@@ -337,7 +294,7 @@ public class MwImpl extends Thread implements Mw {
 	// NOTE: if price <= 0 and the location already exists, it maintains its
 	// current price
 	public boolean addCars(int id, String location, int count, int price)
-			throws IOException {
+			throws IOException, DeadlockException {
 		Trace.info("RM::addCars(" + id + ", " + location + ", " + count + ", $"
 				+ price + ") called");
 		array = new ArrayList<Object>();
@@ -348,11 +305,13 @@ public class MwImpl extends Thread implements Mw {
 		array.add(count);
 		array.add(price);
 		cOs.writeObject(array);
+		if(!cIs.readBoolean())
+			throw new DeadlockException(myId,"");
 		return cIs.readBoolean();
 	}
 
 	// Delete cars from a location
-	public boolean deleteCars(int id, String location) throws IOException {
+	public boolean deleteCars(int id, String location) throws IOException, DeadlockException {
 		Trace.info("RM::deleteCars(" + id + ", " + location
 				+ ") called on middleware");
 		array = new ArrayList<Object>();
@@ -361,11 +320,13 @@ public class MwImpl extends Thread implements Mw {
 		array.add(id);
 		array.add(location);
 		cOs.writeObject(array);
+		if(!cIs.readBoolean())
+			throw new DeadlockException(myId,"");
 		return cIs.readBoolean();
 	}
 
 	// Returns the number of empty seats on this flight
-	public int queryFlight(int id, int flightNum) throws IOException {
+	public int queryFlight(int id, int flightNum) throws IOException, DeadlockException {
 		Trace.info("RM::queryFlight(" + id + ", " + flightNum
 				+ ") called on middleware");
 		array = new ArrayList<Object>();
@@ -374,6 +335,8 @@ public class MwImpl extends Thread implements Mw {
 		array.add(id);
 		array.add(flightNum);
 		fOs.writeObject(array);
+		if(!fIs.readBoolean())
+			throw new DeadlockException(myId,"");
 		return fIs.readInt();
 	}
 
@@ -394,7 +357,7 @@ public class MwImpl extends Thread implements Mw {
 	// }
 
 	// Returns price of this flight
-	public int queryFlightPrice(int id, int flightNum) throws IOException {
+	public int queryFlightPrice(int id, int flightNum) throws IOException, DeadlockException {
 		Trace.info("RM::queryFlightPrice(" + id + ", " + flightNum
 				+ ") called on middleware");
 		array = new ArrayList<Object>();
@@ -403,11 +366,13 @@ public class MwImpl extends Thread implements Mw {
 		array.add(id);
 		array.add(flightNum);
 		fOs.writeObject(array);
+		if(!fIs.readBoolean())
+			throw new DeadlockException(myId,"");
 		return fIs.readInt();
 	}
 
 	// Returns the number of rooms available at a location
-	public int queryRooms(int id, String location) throws IOException {
+	public int queryRooms(int id, String location) throws IOException, DeadlockException {
 		Trace.info("RM::queryRooms(" + id + ", " + location
 				+ ") called on middleware");
 		array = new ArrayList<Object>();
@@ -416,11 +381,13 @@ public class MwImpl extends Thread implements Mw {
 		array.add(id);
 		array.add(location);
 		hOs.writeObject(array);
+		if(!hIs.readBoolean())
+			throw new DeadlockException(myId,"");
 		return hIs.readInt();
 	}
 
 	// Returns room price at this location
-	public int queryRoomsPrice(int id, String location) throws IOException {
+	public int queryRoomsPrice(int id, String location) throws IOException, DeadlockException {
 		Trace.info("RM::queryRoomPrice(" + id + ", " + location
 				+ ") called on middleware");
 		array = new ArrayList<Object>();
@@ -429,11 +396,13 @@ public class MwImpl extends Thread implements Mw {
 		array.add(id);
 		array.add(location);
 		hOs.writeObject(array);
+		if(!hIs.readBoolean())
+			throw new DeadlockException(myId,"");
 		return hIs.readInt();
 	}
 
 	// Returns the number of cars available at a location
-	public int queryCars(int id, String location) throws IOException {
+	public int queryCars(int id, String location) throws IOException, DeadlockException {
 		Trace.info("RM::queryCars(" + id + ", " + location
 				+ ") called on middleware");
 		array = new ArrayList<Object>();
@@ -442,11 +411,13 @@ public class MwImpl extends Thread implements Mw {
 		array.add(id);
 		array.add(location);
 		cOs.writeObject(array);
+		if(!cIs.readBoolean())
+			throw new DeadlockException(myId,"");
 		return cIs.readInt();
 	}
 
 	// Returns price of cars at this location
-	public int queryCarsPrice(int id, String location) throws IOException {
+	public int queryCarsPrice(int id, String location) throws IOException, DeadlockException {
 		Trace.info("RM::queryCarPrice(" + id + ", " + location
 				+ ") called on middleware");
 		array = new ArrayList<Object>();
@@ -455,6 +426,8 @@ public class MwImpl extends Thread implements Mw {
 		array.add(id);
 		array.add(location);
 		cOs.writeObject(array);
+		if(!cIs.readBoolean())
+			throw new DeadlockException(myId,"");
 		return cIs.readInt();
 	}
 
@@ -557,6 +530,8 @@ public class MwImpl extends Thread implements Mw {
 					array.add(reserveditem.getKey());
 					array.add(reserveditem.getCount());
 					fOs.writeObject(array);
+					if(!fIs.readBoolean())
+						throw new DeadlockException(myId,"");
 					temp = fIs.readBoolean();
 				} else if (reserveditem.getKey().charAt(0) == 'c') {
 					array = new ArrayList<Object>();
@@ -566,6 +541,8 @@ public class MwImpl extends Thread implements Mw {
 					array.add(reserveditem.getKey());
 					array.add(reserveditem.getCount());
 					cOs.writeObject(array);
+					if(!cIs.readBoolean())
+						throw new DeadlockException(myId,"");
 					temp = cIs.readBoolean();
 				} else {
 					array = new ArrayList<Object>();
@@ -575,6 +552,8 @@ public class MwImpl extends Thread implements Mw {
 					array.add(reserveditem.getKey());
 					array.add(reserveditem.getCount());
 					hOs.writeObject(array);
+					if(!hIs.readBoolean())
+						throw new DeadlockException(myId,"");
 					temp = hIs.readBoolean();
 				}
 				if (!temp) {
@@ -652,6 +631,8 @@ public class MwImpl extends Thread implements Mw {
 			array.add(Car.getKey(location));
 			array.add(location);
 			cOs.writeObject(array);
+			if(!cIs.readBoolean())
+				throw new DeadlockException(myId,"");
 			int carPrice = cIs.readInt();
 			if (carPrice == -1) {
 				return false;
@@ -668,6 +649,8 @@ public class MwImpl extends Thread implements Mw {
 			array.add(Hotel.getKey(location));
 			array.add(location);
 			hOs.writeObject(array);
+			if(!hIs.readBoolean())
+				throw new DeadlockException(myId,"");
 			int roomPrice = hIs.readInt();
 			if (roomPrice == -1) {
 				return false;
@@ -687,6 +670,8 @@ public class MwImpl extends Thread implements Mw {
 			array.add(Flight.getKey(flightNum));
 			array.add(String.valueOf(flightNum));
 			fOs.writeObject(array);
+			if(!fIs.readBoolean())
+				throw new DeadlockException(myId,"");
 			flightPrice = fIs.readInt();
 			if (flightPrice == -1) {
 				return false;
@@ -701,34 +686,43 @@ public class MwImpl extends Thread implements Mw {
 	}
 
 	public boolean abort() throws IOException{
-		boolean ret = TransactionManager.abort(myId);
+		Vector ret = TransactionManager.abort(myId);
+		int size = ret.size();
+		boolean ret1= false;
 
 		ArrayList<Object> array1 = new ArrayList<Object>();
 		array1.add("abort");
 
-		int code = 0;
-		//send abort to all rms, 0 for flight, 1 for hotel, 2 for car		
-		array1.add(code);
-		fOs.writeObject(array1);
-		array1.remove(1);
-		code++;
-		array1.add(code);
-		hOs.writeObject(array1);
-		array1.remove(1);
-		code++;
-		array1.add(code);
-		cOs.writeObject(array1);
+		for(int i =0; i < size; i++){
+			if(((String)ret.elementAt(i)).equals("f")){ //flight
+				array1.add(i);
+				fOs.writeObject(array1);
+				array1.remove(1);
+				ret1 = fIs.readBoolean();
+			}
+			else if(((String)ret.elementAt(i)).equals("h")){ //hotel
+				array1.add(i);
+				hOs.writeObject(array1);
+				array1.remove(1);
+				ret1 = hIs.readBoolean();
+			}
+			else if(((String)ret.elementAt(i)).equals("c")){ //car
+				array1.add(i);
+				cOs.writeObject(array1);
+				array1.remove(1);
+				ret1 = cIs.readBoolean();
+			}
+			else{
+				System.out.println("a problem in abort() mw");
+				ret1 = false;
+			}
 
-		cIs.readBoolean();
-		fIs.readBoolean();
-		hIs.readBoolean();
+		}
 
 		unlock(myId);
-		return ret;
+		return ret1;
 
 	}
-
-
 
 	public boolean reflector(ArrayList<Object> array, DataOutputStream os)
 			throws IOException {
@@ -751,31 +745,42 @@ public class MwImpl extends Thread implements Mw {
 			os.writeInt(id);
 			return true;
 		} else if (((String) argument[0]).equals("commit")) {
-			boolean ret = TransactionManager.commit(myId);
+
+			Vector ret = TransactionManager.commit(myId);
+			int size = ret.size();
+			boolean ret1= false;
 
 			ArrayList<Object> array1 = new ArrayList<Object>();
 			array1.add("commit");
 
-			int code = 0;
-			//send commit to all rms, 0 for flight, 1 for hotel, 2 for car	
-			array1.add(code);
-			fOs.writeObject(array1);
-			array1.remove(1);
-			code++;
-			array1.add(code);
-			hOs.writeObject(array1);
-			array1.remove(1);
-			code++;
-			array1.add(code);
-			cOs.writeObject(array1);
+			for(int i =0; i < size; i++){
+				if(((String)ret.elementAt(i)).equals("f")){ //flight
+					array1.add(i);
+					fOs.writeObject(array1);
+					array1.remove(1);
+					ret1 = fIs.readBoolean();
+				}
+				else if(((String)ret.elementAt(i)).equals("h")){ //hotel
+					array1.add(i);
+					hOs.writeObject(array1);
+					array1.remove(1);
+					ret1 = hIs.readBoolean();
+				}
+				else if(((String)ret.elementAt(i)).equals("c")){ //car
+					array1.add(i);
+					cOs.writeObject(array1);
+					array1.remove(1);
+					ret1 = cIs.readBoolean();
+				}
+				else{
+					System.out.println("a problem in abort() mw");
+					ret1 = false;
+				}
 
-			cIs.readBoolean();
-			fIs.readBoolean();
-			hIs.readBoolean();
+			}
 
 			unlock(myId);
-			os.writeBoolean(ret);
-			return true;
+			return ret1;
 		} else if (((String) argument[0]).equals("abort")) {
 			os.writeBoolean(abort());
 			return true;
@@ -829,6 +834,7 @@ public class MwImpl extends Thread implements Mw {
 		}
 		else if (((String) argument[0]).equals("addFlight")) {
 			boolean ret;
+			TransactionManager.enlist(myId, "f");
 			try{
 				ret = addFlight(((Integer) argument[1]).intValue(),
 						((Integer) argument[2]).intValue(),
@@ -845,18 +851,36 @@ public class MwImpl extends Thread implements Mw {
 			os.writeBoolean(ret);
 			return true;
 		} else if (((String) argument[0]).equals("addCar")) {
-			boolean ret = addCars(((Integer) argument[1]).intValue(),
-					((String) argument[2]).toString(),
-					((Integer) argument[3]).intValue(),
-					((Integer) argument[4]).intValue());
+			TransactionManager.enlist(myId, "c");
+			boolean ret;
+			try{
+				ret = addCars(((Integer) argument[1]).intValue(),
+						((String) argument[2]).toString(),
+						((Integer) argument[3]).intValue(),
+						((Integer) argument[4]).intValue());
+			}catch(DeadlockException e){
+				os.writeBoolean(false);
+				System.out.println("Deadlock, aborting");
+				abort();
+				return true;
+			}
 			os.writeBoolean(true);
 			os.writeBoolean(ret);
 			return true;
 		} else if (((String) argument[0]).equals("addRoom")) {
-			boolean ret = addRooms(((Integer) argument[1]).intValue(),
-					((String) argument[2]).toString(),
-					((Integer) argument[3]).intValue(),
-					((Integer) argument[4]).intValue());
+			TransactionManager.enlist(myId, "h");
+			boolean ret;
+			try{
+				ret = addRooms(((Integer) argument[1]).intValue(),
+						((String) argument[2]).toString(),
+						((Integer) argument[3]).intValue(),
+						((Integer) argument[4]).intValue());}
+			catch(DeadlockException e){
+				os.writeBoolean(false);
+				System.out.println("Deadlock, aborting");
+				abort();
+				return true;
+			}
 			os.writeBoolean(true);
 			os.writeBoolean(ret);
 			return true;
@@ -892,27 +916,58 @@ public class MwImpl extends Thread implements Mw {
 			os.writeBoolean(ret);
 			return true;
 
-		} /*else if (((String) argument[0]).equals("deleteFlight")) {
-			boolean ret = deleteFlight(((Integer) argument[1]).intValue(),
-					((Integer) argument[2]).intValue());
+		} else if (((String) argument[0]).equals("deleteFlight")) {
+			boolean ret;
+			TransactionManager.enlist(myId, "f");
+			try{
+				ret = deleteFlight(((Integer) argument[1]).intValue(),
+						((Integer) argument[2]).intValue());
+			}catch(DeadlockException e){
+				os.writeBoolean(false);
+				System.out.println("Deadlock, aborting");
+				abort();
+				return true;
+			}
+
 			os.writeBoolean(true);
 			os.writeBoolean(ret);
 			return true;
 		} else if (((String) argument[0]).equals("deleteCar")) {
-			boolean ret = deleteCars(((Integer) argument[1]).intValue(),
-					((String) argument[2]).toString());
+			TransactionManager.enlist(myId, "c");
+			boolean ret;
+			try{
+				ret = deleteCars(((Integer) argument[1]).intValue(),
+						((String) argument[2]).toString());
+
+			}
+			catch(DeadlockException e){
+				os.writeBoolean(false);
+				System.out.println("Deadlock, aborting");
+				abort();
+				return true;
+			}
 			os.writeBoolean(true);
 			os.writeBoolean(ret);
 			return true;
 		} else if (((String) argument[0]).equals("deleteRoom")) {
-			boolean ret = deleteRooms(((Integer) argument[1]).intValue(),
-					((String) argument[2]).toString());
+			TransactionManager.enlist(myId, "h");
+			boolean ret;
+			try{
+				ret = deleteRooms(((Integer) argument[1]).intValue(),
+						((String) argument[2]).toString());}
+			catch(DeadlockException e){
+				os.writeBoolean(false);
+				System.out.println("Deadlock, aborting");
+				abort();
+				return true;
+			}
 			os.writeBoolean(true);
 			os.writeBoolean(ret);
 			return true;
-		}*/ 
+		} 
 		else if (((String) argument[0]).equals("deleteCustomer")) {
-			boolean ret; 
+			boolean ret;
+
 			try{
 				ret= deleteCustomer(((Integer) argument[1]).intValue(),
 						((Integer) argument[2]).intValue());}
@@ -925,55 +980,124 @@ public class MwImpl extends Thread implements Mw {
 			os.writeBoolean(true);
 			os.writeBoolean(ret);
 			return true;
-		}/* 
+		}
 		else if (((String) argument[0]).equals("queryFlight")) {
-			int ret = queryFlight(((Integer) argument[1]).intValue(),
-					((Integer) argument[2]).intValue());
+			int ret;
+			TransactionManager.enlist(myId, "f");
+			try{
+				ret = queryFlight(((Integer) argument[1]).intValue(),
+						((Integer) argument[2]).intValue());
+			}
+			catch(DeadlockException e){
+				os.writeBoolean(false);
+				System.out.println("Deadlock, aborting");
+				abort();
+				return true;
+			}
 			os.writeBoolean(true);
 			os.writeInt(ret);
 			return true;
 		} else if (((String) argument[0]).equals("queryCar")) {
-			int ret = queryCars(((Integer) argument[1]).intValue(),
-					((String) argument[2]).toString());
+			TransactionManager.enlist(myId, "c");
+
+			int ret;
+			try{
+				ret = queryCars(((Integer) argument[1]).intValue(),
+						((String) argument[2]).toString());
+			}
+			catch(DeadlockException e){
+				os.writeBoolean(false);
+				System.out.println("Deadlock, aborting");
+				abort();
+				return true;
+			}
 			os.writeBoolean(true);
 			os.writeInt(ret);
 			return true;
 		} else if (((String) argument[0]).equals("queryRoom")) {
-			int ret = queryRooms(((Integer) argument[1]).intValue(),
-					((String) argument[2]).toString());
+			TransactionManager.enlist(myId, "h");
+
+			int ret;
+			try{
+				ret = queryRooms(((Integer) argument[1]).intValue(),
+						((String) argument[2]).toString());}
+			catch(DeadlockException e){
+				os.writeBoolean(false);
+				System.out.println("Deadlock, aborting");
+				abort();
+				return true;
+			}
 			os.writeBoolean(true);
 			os.writeInt(ret);
 			return true;
 		} else if (((String) argument[0]).equals("queryCustomer")) {
-			String ret = queryCustomerInfo(((Integer) argument[1]).intValue(),
-					((Integer) argument[2]).intValue());
+			String ret;
+			try{
+				ret = queryCustomerInfo(((Integer) argument[1]).intValue(),
+						((Integer) argument[2]).intValue());
+			}
+			catch(DeadlockException e){
+				os.writeBoolean(false);
+				System.out.println("Deadlock, aborting");
+				abort();
+				return true;
+			}
 			os.writeBoolean(true);
 			oos.writeObject(ret);
 			return true;
 		} else if (((String) argument[0]).equals("queryFlightPrice")) {
-			int ret = queryFlightPrice(((Integer) argument[1]).intValue(),
-					((Integer) argument[2]).intValue());
+			TransactionManager.enlist(myId, "f");
+			int ret;
+			try{
+				ret = queryFlightPrice(((Integer) argument[1]).intValue(),
+						((Integer) argument[2]).intValue());
+			}
+			catch(DeadlockException e){
+				os.writeBoolean(false);
+				System.out.println("Deadlock, aborting");
+				abort();
+				return true;
+			}
 			os.writeBoolean(true);
 			os.writeInt(ret);
 			return true;
 		} else if (((String) argument[0]).equals("queryCarPrice")) {
-			int ret = queryCarsPrice(((Integer) argument[1]).intValue(),
-					((String) argument[2]).toString());
+			TransactionManager.enlist(myId, "c");
+			int ret;
+			try{
+				ret = queryCarsPrice(((Integer) argument[1]).intValue(),
+						((String) argument[2]).toString());}
+			catch(DeadlockException e){
+				os.writeBoolean(false);
+				System.out.println("Deadlock, aborting");
+				abort();
+				return true;
+			}
 			os.writeBoolean(true);
 			os.writeInt(ret);
 			return true;
 		} else if (((String) argument[0]).equals("queryRoomPrice")) {
-			int ret = queryRoomsPrice(((Integer) argument[1]).intValue(),
-					((String) argument[2]).toString());
+			TransactionManager.enlist(myId, "h");
+			int ret;
+			try{
+				ret = queryRoomsPrice(((Integer) argument[1]).intValue(),
+						((String) argument[2]).toString());}
+			catch(DeadlockException e){
+				os.writeBoolean(false);
+				System.out.println("Deadlock, aborting");
+				abort();
+				return true;
+			}
 			os.writeBoolean(true);
 			os.writeInt(ret);
 			return true;
 		} else if (((String) argument[0]).equals("reserveFlight")) {
 			boolean ret;
+			TransactionManager.enlist(myId, "f");
 			try{
-			ret = reserveFlight(((Integer) argument[1]).intValue(),
-					((Integer) argument[2]).intValue(),
-					((Integer) argument[3]).intValue());
+				ret = reserveFlight(((Integer) argument[1]).intValue(),
+						((Integer) argument[2]).intValue(),
+						((Integer) argument[3]).intValue());
 			}
 			catch(DeadlockException e){
 				os.writeBoolean(false);
@@ -985,20 +1109,41 @@ public class MwImpl extends Thread implements Mw {
 			os.writeBoolean(ret);
 			return true;
 		} else if (((String) argument[0]).equals("reserveCar")) {
-			boolean ret = reserveCar(((Integer) argument[1]).intValue(),
-					((Integer) argument[2]).intValue(),
-					((String) argument[3]).toString());
+			TransactionManager.enlist(myId, "c");
+			boolean ret;
+			try{
+				ret = reserveCar(((Integer) argument[1]).intValue(),
+						((Integer) argument[2]).intValue(),
+						((String) argument[3]).toString());}
+			catch(DeadlockException e){
+				os.writeBoolean(false);
+				System.out.println("Deadlock, aborting");
+				abort();
+				return true;
+			}
 			os.writeBoolean(true);
 			os.writeBoolean(ret);
 			return true;
 		} else if (((String) argument[0]).equals("reserveRoom")) {
-			boolean ret = reserveRoom(((Integer) argument[1]).intValue(),
-					((Integer) argument[2]).intValue(),
-					((String) argument[3]).toString());
+			TransactionManager.enlist(myId, "h");
+			boolean ret;
+			try{
+				ret = reserveRoom(((Integer) argument[1]).intValue(),
+						((Integer) argument[2]).intValue(),
+						((String) argument[3]).toString());}
+			catch(DeadlockException e){
+				os.writeBoolean(false);
+				System.out.println("Deadlock, aborting");
+				abort();
+				return true;
+			}
 			os.writeBoolean(true);
 			os.writeBoolean(ret);
 			return true;
 		} else if (((String) argument[0]).equals("itinerary")) {
+			TransactionManager.enlist(myId, "f");
+			TransactionManager.enlist(myId, "c");
+			TransactionManager.enlist(myId, "h");
 			boolean ret;
 			try{
 				ret = itinerary(((Integer) argument[1]).intValue(),
@@ -1017,7 +1162,7 @@ public class MwImpl extends Thread implements Mw {
 			os.writeBoolean(true);
 			os.writeBoolean(ret);
 			return true;
-		} */else {
+		} else {
 			System.out.println("Method desired was not found");
 			return false;
 		}

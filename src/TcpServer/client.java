@@ -250,6 +250,12 @@ public class client {
 					array.add(Id);
 					array.add(flightNum);
 					oos.writeObject(array);
+					
+					if(!is.readBoolean()){
+						deadLock();
+						continue;
+					}
+					
 					if (is.readBoolean()) {
 						System.out.println("Flight deleted");
 					} else {
@@ -388,6 +394,11 @@ public class client {
 					array.add(flightNum);
 					oos.writeObject(array);
 
+					if(!is.readBoolean()){
+						deadLock();
+						continue;
+					}
+					
 					System.out.println("Number of seats available: "
 							+ is.readInt());
 
@@ -479,6 +490,12 @@ public class client {
 					array.add(Id);
 					array.add(customer);
 					oos.writeObject(array);
+					
+					if(!is.readBoolean()){
+						deadLock();
+						continue;
+					}
+					
 					System.out.println("Customer info:"
 							+ (String) iis.readObject());
 				} catch (Exception e) {
@@ -508,6 +525,10 @@ public class client {
 					array.add(Id);
 					array.add(flightNum);
 					oos.writeObject(array);
+					if(!is.readBoolean()){
+						deadLock();
+						continue;
+					}
 
 					System.out.println("Price of a seat: " + is.readInt());
 
@@ -600,6 +621,12 @@ public class client {
 					array.add(customer);
 					array.add(flightNum);
 					oos.writeObject(array);
+					
+					if(!is.readBoolean()){
+						deadLock();
+						continue;
+					}
+					
 					if (is.readBoolean()) {
 						System.out.println("Flight reserved");
 					} else {
