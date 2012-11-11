@@ -965,7 +965,7 @@ public class client {
 						}
 						is.close();
 						clientSocket.close();
-						
+						oos.close();
 						System.out.println("Quitting client.");
 						System.exit(1);
 					}

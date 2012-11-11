@@ -31,14 +31,14 @@ public class RmImpl extends Thread implements Rm {
 		}
 		while (true) {
 			ArrayList<Object> array = new ArrayList<Object>();
-			try {
+			try 
+			{
 				array = (ArrayList<Object>) iis.readObject();
-			} catch (Exception e) {
+			} 
+			catch (Exception e) 
+			{
 			}
-			/*
-			 * if(array.size()==0) { System.out.println("Client disconnected");
-			 * break; }
-			 */
+			
 			if (array != null) {
 				if (((String) array.get(0)).compareToIgnoreCase("quit") == 0) {
 					System.out.println("Client disconnected");
@@ -547,9 +547,10 @@ public class RmImpl extends Thread implements Rm {
 			System.out.println("Unlock failed in the Rm");
 	}
 
-	public boolean reflector(ArrayList<Object> array, DataOutputStream os)
-			throws IOException, DeadlockException {
+	public boolean reflector(ArrayList<Object> array, DataOutputStream os) throws IOException, DeadlockException 
+	{
 		Object[] argument = array.toArray();
+		
 		if (((String) argument[0]).equals("addFlight")) {
 			boolean ret;
 			try{
@@ -565,11 +566,15 @@ public class RmImpl extends Thread implements Rm {
 			os.writeBoolean(true);
 			os.writeBoolean(ret);
 			return true;
-		} else if (((String) argument[0]).equals("Id")) {
+		} 
+		
+		else if (((String) argument[0]).equals("Id")) {
 			myId = (Integer) argument[1];
 			System.out.println("New transaction started with transaction id: " + myId );
 			return true;
-		} else if (((String) argument[0]).equals("addCar")) {
+		} 
+		
+		else if (((String) argument[0]).equals("addCar")) {
 			boolean ret;
 			try{
 				ret = addCars(((Integer) argument[1]).intValue(),
@@ -584,7 +589,9 @@ public class RmImpl extends Thread implements Rm {
 			os.writeBoolean(true);
 			os.writeBoolean(ret);
 			return true;
-		} else if (((String) argument[0]).equals("addRoom")) {
+		} 
+		
+		else if (((String) argument[0]).equals("addRoom")) {
 			boolean ret;
 			try{
 				ret = addRooms(((Integer) argument[1]).intValue(),
@@ -600,16 +607,22 @@ public class RmImpl extends Thread implements Rm {
 			os.writeBoolean(true);
 			os.writeBoolean(ret);
 			return true;
-		} else if (((String) argument[0]).equals("newcustomer")) {
+		} 
+		
+		else if (((String) argument[0]).equals("newcustomer")) {
 			int ret = newCustomer(((Integer) argument[1]).intValue());
 			os.writeInt(ret);
 			return true;
-		} else if (((String) argument[0]).equals("newcustomerid")) {
+		} 
+		
+		else if (((String) argument[0]).equals("newcustomerid")) {
 			boolean ret = newCustomer(((Integer) argument[1]).intValue(),
 					((Integer) argument[2]).intValue());
 			os.writeBoolean(ret);
 			return true;
-		} else if (((String) argument[0]).equals("deleteFlight")) {
+		} 
+		
+		else if (((String) argument[0]).equals("deleteFlight")) {
 			boolean ret;
 			try{
 				ret = deleteFlight(((Integer) argument[1]).intValue(),
@@ -623,7 +636,9 @@ public class RmImpl extends Thread implements Rm {
 			os.writeBoolean(true);
 			os.writeBoolean(ret);
 			return true;
-		} else if (((String) argument[0]).equals("deleteCar")) {
+		} 
+		
+		else if (((String) argument[0]).equals("deleteCar")) {
 			boolean ret;
 			try{
 				ret = deleteCars(((Integer) argument[1]).intValue(),
@@ -637,7 +652,9 @@ public class RmImpl extends Thread implements Rm {
 			os.writeBoolean(true);
 			os.writeBoolean(ret);
 			return true;
-		} else if (((String) argument[0]).equals("deleteRoom")) {
+		} 
+		
+		else if (((String) argument[0]).equals("deleteRoom")) {
 			boolean ret;
 			try{
 				ret = deleteRooms(((Integer) argument[1]).intValue(),
@@ -650,7 +667,9 @@ public class RmImpl extends Thread implements Rm {
 			os.writeBoolean(true);
 			os.writeBoolean(ret);
 			return true;
-		} else if (((String) argument[0]).equals("deleteCustomer")) {
+		} 
+		
+		else if (((String) argument[0]).equals("deleteCustomer")) {
 			boolean ret;
 			try{
 				ret = deleteCustomer(((Integer) argument[1]).intValue(),
@@ -663,7 +682,9 @@ public class RmImpl extends Thread implements Rm {
 			os.writeBoolean(true);
 			os.writeBoolean(ret);
 			return true;
-		} else if (((String) argument[0]).equals("queryFlight")) {
+		} 
+		
+		else if (((String) argument[0]).equals("queryFlight")) {
 			int ret;
 			try{	
 				ret = queryFlight(((Integer) argument[1]).intValue(),
@@ -676,7 +697,9 @@ public class RmImpl extends Thread implements Rm {
 			os.writeBoolean(true);
 			os.writeInt(ret);
 			return true;
-		} else if (((String) argument[0]).equals("queryCar")) {
+		} 
+		
+		else if (((String) argument[0]).equals("queryCar")) {
 			int ret;
 			try{
 				ret = queryCars(((Integer) argument[1]).intValue(),
@@ -689,7 +712,9 @@ public class RmImpl extends Thread implements Rm {
 			os.writeBoolean(true);
 			os.writeInt(ret);
 			return true;
-		} else if (((String) argument[0]).equals("queryRoom")) {
+		} 
+		
+		else if (((String) argument[0]).equals("queryRoom")) {
 			int ret;
 			try{
 				ret = queryRooms(((Integer) argument[1]).intValue(),
@@ -702,7 +727,9 @@ public class RmImpl extends Thread implements Rm {
 			os.writeBoolean(true);
 			os.writeInt(ret);
 			return true;
-		} else if (((String) argument[0]).equals("removeReservation")) {
+		} 
+		
+		else if (((String) argument[0]).equals("removeReservation")) {
 			boolean ret;
 			try{
 				ret = removeReservation(((Integer) argument[1]).intValue(),
@@ -716,7 +743,9 @@ public class RmImpl extends Thread implements Rm {
 			os.writeBoolean(true);
 			os.writeBoolean(ret);
 			return true;
-		} else if (((String) argument[0]).equals("queryFlightPrice")) {
+		} 
+		
+		else if (((String) argument[0]).equals("queryFlightPrice")) {
 			int ret;
 			try{
 				ret = queryFlightPrice(((Integer) argument[1]).intValue(),
@@ -730,7 +759,9 @@ public class RmImpl extends Thread implements Rm {
 			os.writeBoolean(true);
 			os.writeInt(ret);
 			return true;
-		} else if (((String) argument[0]).equals("queryCarPrice")) {
+		} 
+		
+		else if (((String) argument[0]).equals("queryCarPrice")) {
 			int ret;
 			try{
 				ret = queryCarsPrice(((Integer) argument[1]).intValue(),
@@ -743,7 +774,9 @@ public class RmImpl extends Thread implements Rm {
 			os.writeBoolean(true);
 			os.writeInt(ret);
 			return true;
-		} else if (((String) argument[0]).equals("queryRoomPrice")) {
+		} 
+		
+		else if (((String) argument[0]).equals("queryRoomPrice")) {
 			int ret;
 			try{
 				ret = queryRoomsPrice(((Integer) argument[1]).intValue(),
@@ -756,7 +789,9 @@ public class RmImpl extends Thread implements Rm {
 			os.writeBoolean(true);
 			os.writeInt(ret);
 			return true;
-		} else if (((String) argument[0]).equals("reserveItemHelper")) {
+		} 
+		
+		else if (((String) argument[0]).equals("reserveItemHelper")) {
 			int ret;
 			try{
 				ret = reserveItemHelper(((Integer) argument[1]).intValue(),
@@ -772,7 +807,9 @@ public class RmImpl extends Thread implements Rm {
 			os.writeBoolean(true);
 			os.writeInt(ret);
 			return true;
-		} else if (((String) argument[0]).equals("reserveCar")) {
+		} 
+		
+		else if (((String) argument[0]).equals("reserveCar")) {
 			boolean ret;
 			try{
 				ret = reserveCar(((Integer) argument[1]).intValue(),
@@ -786,7 +823,9 @@ public class RmImpl extends Thread implements Rm {
 			os.writeBoolean(true);
 			os.writeBoolean(ret);
 			return true;
-		} else if (((String) argument[0]).equals("reserveRoom")) {
+		} 
+		
+		else if (((String) argument[0]).equals("reserveRoom")) {
 			boolean ret;
 			try{
 				ret = reserveRoom(((Integer) argument[1]).intValue(),
@@ -800,7 +839,9 @@ public class RmImpl extends Thread implements Rm {
 			os.writeBoolean(true);
 			os.writeBoolean(ret);
 			return true;
-		} else if (((String) argument[0]).equals("itinerary")) {
+		} 
+		
+		else if (((String) argument[0]).equals("itinerary")) {
 			boolean ret;
 
 			try{
@@ -818,7 +859,9 @@ public class RmImpl extends Thread implements Rm {
 			os.writeBoolean(true);
 			os.writeBoolean(ret);
 			return true;
-		} else if  (((String) argument[0]).equals("commit")) {
+		} 
+		
+		else if  (((String) argument[0]).equals("commit")) {
 			boolean ret;
 			if(((Integer)argument[1]).intValue()==0){//flight
 				System.out.println("committing flight Rm");
@@ -835,7 +878,9 @@ public class RmImpl extends Thread implements Rm {
 			unlock(myId);
 			os.writeBoolean(true);
 			return true;
-		} else if  (((String) argument[0]).equals("abort")) {
+		} 
+		
+		else if  (((String) argument[0]).equals("abort")) {
 			if(((Integer)argument[1]).intValue()==0){//flight
 				System.out.println("aborting flight Rm");
 				FlightHashTable.abort(myId);
@@ -863,13 +908,10 @@ public class RmImpl extends Thread implements Rm {
 		else if(((String) argument[0]).equals("shutdown")) {
 			iis.close();
 			os.close();
-
 			clientSocket.close();
-
-			System.out.println("Quitting rm.");
+			System.out.println("Shuting down rm.");
 			System.exit(1);
 			return true;
-
 		}
 
 		else {
