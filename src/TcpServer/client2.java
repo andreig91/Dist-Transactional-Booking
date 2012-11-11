@@ -59,7 +59,7 @@ public class client2 {
 		} catch (IOException e) {
 		}
 		while (true) {
-			System.out.print("\n>");
+			//System.out.println("\n");
 			try {
 				// read the next command
 

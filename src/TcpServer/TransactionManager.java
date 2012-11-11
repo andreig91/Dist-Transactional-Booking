@@ -21,50 +21,30 @@ public class TransactionManager {
 	{
 		return 	map.keySet().size() > 0;
 	}
+	
 	static void enlist(int id, String rm) {
 		Vector aVector;
-		if (map.containsKey(id)) {
-			aVector = map.get(id);
-			aVector.add(rm);
-		} else {
-			aVector = new Vector();
+		aVector = map.get(id);
+		if(!aVector.contains(rm))
+		{
 			aVector.add(rm);
 		}
 		map.put(id, aVector);
 	}
 
-	static boolean commit(int id) {
+	static Vector commit(int id) {
 		Vector aVector;
-		if (map.containsKey(id)) {
-			aVector = map.get(id);
-			int size = aVector.size();
-	//		for (int i = 0; i < size; i++) {
-	//			String rm = (String) aVector.elementAt(i);
-	//			if (rm.equals("Mw")) {
-					MwHashTable.commit(id);
-	//			} 
-	//		}
-			map.remove(id);
-			return true;
-		}
-		return false;
+		aVector = map.get(id);
+		MwHashTable.commit(id);
+		map.remove(id);
+		return aVector;
 	}
 
-	static boolean abort(int id) {
+	static Vector abort(int id) {
 		Vector aVector;
-		if (map.containsKey(id)) {
-			aVector = map.get(id);
-			int size = aVector.size();
-	//		for (int i = 0; i < size; i++) {
-	//			String rm = (String) aVector.elementAt(i);
-	//			if (rm.equals("Mw")) {
-					MwHashTable.abort(id);
-	//			} 
-	//		}
-	//	}
+		aVector = map.get(id);
+		MwHashTable.abort(id);
 		map.remove(id);
-		return true;
-	}
-	return false;
+		return aVector;
 }
 }
