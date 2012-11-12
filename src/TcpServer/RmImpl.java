@@ -243,6 +243,7 @@ public class RmImpl extends Thread implements Rm {
 			// writeData( id, cust.getKey(), cust );
 
 			// decrease the number of available items in the storage
+			writeData(id, item.getKey(), item);
 			item.setCount(item.getCount() - 1);
 			item.setReserved(item.getReserved() + 1);
 
@@ -269,11 +270,11 @@ public class RmImpl extends Thread implements Rm {
 					+ flightPrice);
 		} else {
 			// add seats to existing flight and update the price...
+			writeData(id, curObj.getKey(), curObj);
 			curObj.setCount(curObj.getCount() + flightSeats);
 			if (flightPrice > 0) {
 				curObj.setPrice(flightPrice);
 			} // if
-			writeData(id, curObj.getKey(), curObj);
 			Trace.info("RM::addFlight(" + id + ") modified existing flight "
 					+ flightNum + ", seats=" + curObj.getCount() + ", price=$"
 					+ flightPrice);
@@ -301,11 +302,11 @@ public class RmImpl extends Thread implements Rm {
 					+ location + ", count=" + count + ", price=$" + price);
 		} else {
 			// add count to existing object and update price...
+			writeData(id, curObj.getKey(), curObj);
 			curObj.setCount(curObj.getCount() + count);
 			if (price > 0) {
 				curObj.setPrice(price);
 			} // if
-			writeData(id, curObj.getKey(), curObj);
 			Trace.info("RM::addRooms(" + id + ") modified existing location "
 					+ location + ", count=" + curObj.getCount() + ", price=$"
 					+ price);
@@ -334,11 +335,11 @@ public class RmImpl extends Thread implements Rm {
 					+ location + ", count=" + count + ", price=$" + price);
 		} else {
 			// add count to existing car location and update price...
+			writeData(id, curObj.getKey(), curObj);
 			curObj.setCount(curObj.getCount() + count);
 			if (price > 0) {
 				curObj.setPrice(price);
 			} // if
-			writeData(id, curObj.getKey(), curObj);
 			Trace.info("RM::addCars(" + id + ") modified existing location "
 					+ location + ", count=" + curObj.getCount() + ", price=$"
 					+ price);
@@ -468,6 +469,7 @@ public class RmImpl extends Thread implements Rm {
 					+ count + ") failed--item doesn't exist");
 			return false;
 		}
+		writeData(id, item.getKey(), item);
 		item.setReserved(item.getReserved() - count);
 		item.setCount(item.getCount() + count);
 		return true;

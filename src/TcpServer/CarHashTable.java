@@ -32,11 +32,13 @@ public class CarHashTable {
 
 	public static void logBeforeValue(int id, String key) {
 		RMHashtable table;
-		RMItem temp = readData(id, key);
+		Car temp = (Car) readData(id, key);
 		if (recoveryMap.containsKey(id)) {
 			table = recoveryMap.get(id);
 			if (!table.containsKey(key) && temp != null) {
-				table.put(key, temp);
+				Car newCar = new Car(temp.getLocation(), temp.getCount(), temp.getPrice());
+				newCar.setReserved(temp.getReserved());
+				table.put(key, newCar);
 			}
 			else if (temp == null){
 				table.put(key, zero);
@@ -45,7 +47,9 @@ public class CarHashTable {
 			table = new RMHashtable();
 			if(temp != null)
 			{
-				table.put(key, temp);
+				Car newCar = new Car(temp.getLocation(), temp.getCount(), temp.getPrice());
+				newCar.setReserved(temp.getReserved());
+				table.put(key, newCar);
 			}
 			else if (temp == null){
 				table.put(key, zero);

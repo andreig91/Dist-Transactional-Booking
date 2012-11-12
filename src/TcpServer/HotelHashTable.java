@@ -32,11 +32,13 @@ public class HotelHashTable {
 
 	public static void logBeforeValue(int id, String key) {
 		RMHashtable table;
-		RMItem temp = readData(id, key);
+		Hotel temp = (Hotel) readData(id, key);
 		if (recoveryMap.containsKey(id)) {
 			table = recoveryMap.get(id);
 			if (!table.containsKey(key) && temp != null) {
-				table.put(key, temp);
+				Hotel newHotel = new Hotel(temp.getLocation(), temp.getCount(), temp.getPrice());
+				newHotel.setReserved(temp.getReserved());
+				table.put(key, newHotel);
 			}
 			else if (temp == null){
 				table.put(key, zero);
@@ -45,7 +47,9 @@ public class HotelHashTable {
 			table = new RMHashtable();
 			if(temp != null)
 			{
-				table.put(key, temp);
+				Hotel newHotel = new Hotel(temp.getLocation(), temp.getCount(), temp.getPrice());
+				newHotel.setReserved(temp.getReserved());
+				table.put(key, newHotel);
 			}
 			else if (temp == null){
 				table.put(key, zero);

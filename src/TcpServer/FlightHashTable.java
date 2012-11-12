@@ -32,11 +32,13 @@ public class FlightHashTable {
 
 	public static void logBeforeValue(int id, String key) {
 		RMHashtable table;
-		RMItem temp = readData(id, key);
+		Flight temp = (Flight)readData(id, key);
 		if (recoveryMap.containsKey(id)) {
 			table = recoveryMap.get(id);
 			if (!table.containsKey(key) && temp != null) {
-				table.put(key, temp);
+				Flight newFlight = new Flight(Integer.parseInt(temp.getLocation()), temp.getCount(), temp.getPrice());
+				newFlight.setReserved(temp.getReserved());
+				table.put(key, newFlight);
 			}
 			else if (temp == null){
 				table.put(key, zero);
@@ -45,7 +47,9 @@ public class FlightHashTable {
 			table = new RMHashtable();
 			if(temp != null)
 			{
-				table.put(key, temp);
+				Flight newFlight = new Flight(Integer.parseInt(temp.getLocation()), temp.getCount(), temp.getPrice());
+				newFlight.setReserved(temp.getReserved());
+				table.put(key, newFlight);
 			}
 			else if (temp == null){
 				table.put(key, zero);

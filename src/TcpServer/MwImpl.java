@@ -209,8 +209,8 @@ public class MwImpl extends Thread implements Mw {
 		if (price == -1) {
 			return false;
 		} else {
-			cust.reserve(key, location, price);
 			writeData(id, cust.getKey(), cust);
+			cust.reserve(key, location, price);
 			Trace.info("RM::reserveItem( " + id + ", " + customerID + ", "
 					+ key + ", " + location + ") succeeded");
 			return true;
@@ -285,7 +285,8 @@ public class MwImpl extends Thread implements Mw {
 		array.add(method);
 		array.add(id);
 		array.add(location);
-		hOs.writeObject(array);if(!hIs.readBoolean())
+		hOs.writeObject(array);
+		if(!hIs.readBoolean())
 			throw new DeadlockException(myId,"");
 		return hIs.readBoolean();
 	}
@@ -637,8 +638,8 @@ public class MwImpl extends Thread implements Mw {
 			if (carPrice == -1) {
 				return false;
 			}
-			cust.reserve(Car.getKey(location), location, carPrice);
 			writeData(id, cust.getKey(), cust);
+			cust.reserve(Car.getKey(location), location, carPrice);
 		}
 		if (Room) {
 			array = new ArrayList<Object>();
@@ -655,8 +656,8 @@ public class MwImpl extends Thread implements Mw {
 			if (roomPrice == -1) {
 				return false;
 			}
-			cust.reserve(Hotel.getKey(location), location, roomPrice);
 			writeData(id, cust.getKey(), cust);
+			cust.reserve(Hotel.getKey(location), location, roomPrice);
 		}
 		Iterator iterator = flightNumbers.iterator();
 		int flightPrice;
@@ -676,9 +677,8 @@ public class MwImpl extends Thread implements Mw {
 			if (flightPrice == -1) {
 				return false;
 			}
-			cust.reserve(Flight.getKey(flightNum), String.valueOf(flightNum),
-					flightPrice);
 			writeData(id, cust.getKey(), cust);
+			cust.reserve(Flight.getKey(flightNum), String.valueOf(flightNum), flightPrice);
 		}
 		Trace.info("RM::Reserve Itinerary(" + id + ", " + customer
 				+ ") Succeded");
@@ -992,7 +992,9 @@ public class MwImpl extends Thread implements Mw {
 		} 
 		else if (((String) argument[0]).equals("deleteCustomer")) {
 			boolean ret;
-
+			TransactionManager.enlist(myId, "f");
+			TransactionManager.enlist(myId, "c");
+			TransactionManager.enlist(myId, "h");
 			try{
 				ret= deleteCustomer(((Integer) argument[1]).intValue(),
 						((Integer) argument[2]).intValue());}
