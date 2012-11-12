@@ -661,7 +661,8 @@ public class MwImpl extends Thread implements Mw {
 		}
 		Iterator iterator = flightNumbers.iterator();
 		int flightPrice;
-		while (iterator.hasNext()) {
+		while (iterator.hasNext()) 
+		{
 			int flightNum = Integer.parseInt(iterator.next().toString());
 			array = new ArrayList<Object>();
 			String method = "reserveItemHelper";

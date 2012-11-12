@@ -790,18 +790,33 @@ public class client {
 						deadLock();
 						continue;
 					}
-					if (is.readBoolean()) {
+					if (is.readBoolean()) 
+					{
 						System.out.println("Itinerary Reserved");
-					} else {
-						System.out.println("Itinerary could not be reserved");
-						ArrayList<Object> array1 = new ArrayList<Object>();
-						String start = "abort";
-						array1.add(start);
-						oos.writeObject(array1);
-						if (is.readBoolean()) {
-							System.out.println("aborted because itinerary failed");
-						} else {
-							System.out.println("itinerary failed, aborting failed");
+					} 
+					else 
+					{
+						try
+						{
+							System.out.println("Itinerary could not be reserved");
+							ArrayList<Object> array1 = new ArrayList<Object>();
+							String start = "abort";
+							array1.add(start);
+							oos.writeObject(array1);
+							if (is.readBoolean()) 
+							{
+								System.out.println("ABORTING because itinerary failed");
+							} 
+							else 
+							{
+								System.out.println("itinerary failed, aborting failed");
+							}
+						} 
+						catch (Exception e) 
+						{
+							System.out.println("EXCEPTION:");
+							System.out.println(e.getMessage());
+							e.printStackTrace();
 						}
 					}
 
