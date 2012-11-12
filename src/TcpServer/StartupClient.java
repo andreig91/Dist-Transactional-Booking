@@ -241,5 +241,31 @@ public class StartupClient
 			e.printStackTrace();
 			System.exit(0);
 		}
+		
+		try 
+		{
+			ArrayList<Object> array = new ArrayList<Object>();
+			String quit = "quit";
+			array.add(quit);
+			oos.writeObject(array);
+			try 
+			{
+				Thread.sleep(1000);
+			} catch (Exception e) {
+				
+			}
+			is.close();
+			clientSocket.close();
+		} 
+		catch (UnknownHostException e) 
+		{
+			System.err.println("Trying to connect to unknown host: "
+					+ e);
+		} 
+		catch (IOException e) 
+		
+		{
+			System.err.println("IOException: " + e);
+		}
 	}
 }
