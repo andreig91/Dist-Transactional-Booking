@@ -1,5 +1,6 @@
 package TcpServer;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 
@@ -32,11 +33,11 @@ public class MwHashTable {
 
 	public static void logBeforeValue(int id, String key) {
 		RMHashtable table;
-		RMItem temp = readData(id, key);
+		Customer temp = (Customer) readData(id, key);
 		if (recoveryMap.containsKey(id)) {
 			table = recoveryMap.get(id);
 			if (!table.containsKey(key) && temp != null) {
-				table.put(key, temp);
+				table.put(key, copyCustomer(temp));
 			}
 			else if (temp == null){
 				table.put(key, zero);
@@ -44,14 +45,28 @@ public class MwHashTable {
 		} else {
 			table = new RMHashtable();
 			if(temp != null)
-			{
-				table.put(key, temp);
+			{	
+				table.put(key, copyCustomer(temp));
 			}
 			else if (temp == null){
 				table.put(key, zero);
 			}
 		}
 		recoveryMap.put(id, table);
+	}
+	public static Customer copyCustomer(Customer temp)
+	{
+		Customer newCustomer = new Customer(temp.getID());
+		RMHashtable table = temp.getReservations();
+		Enumeration<String> keys = table.keys();
+		while(keys.hasMoreElements())
+		{
+			String aKey = keys.nextElement();
+			ReservedItem item = temp.getReservedItem(aKey);
+			ReservedItem newItem = new ReservedItem(item.getReservableItemKey(), item.getLocation(), item.getCount(), item.getPrice());
+			newCustomer.putReservedItem(aKey, newItem);
+		}
+		return newCustomer;
 	}
 
 	public static void abort(int id) {

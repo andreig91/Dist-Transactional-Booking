@@ -104,9 +104,9 @@ public class MwImpl extends Thread implements Mw {
 				try {
 					boolean ret = reflector(array, os);
 					if (ret) {
-						System.out.println("Threaded operation Worked!");
+						System.out.println(myId + "'s operation executed");
 					} else {
-						System.out.println("Threaded operation failed");
+						System.out.println(myId + "'s operation failed");
 					}
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -209,8 +209,8 @@ public class MwImpl extends Thread implements Mw {
 		if (price == -1) {
 			return false;
 		} else {
-			cust.reserve(key, location, price);
 			writeData(id, cust.getKey(), cust);
+			cust.reserve(key, location, price);
 			Trace.info("RM::reserveItem( " + id + ", " + customerID + ", "
 					+ key + ", " + location + ") succeeded");
 			return true;
@@ -285,7 +285,8 @@ public class MwImpl extends Thread implements Mw {
 		array.add(method);
 		array.add(id);
 		array.add(location);
-		hOs.writeObject(array);if(!hIs.readBoolean())
+		hOs.writeObject(array);
+		if(!hIs.readBoolean())
 			throw new DeadlockException(myId,"");
 		return hIs.readBoolean();
 	}
@@ -637,8 +638,8 @@ public class MwImpl extends Thread implements Mw {
 			if (carPrice == -1) {
 				return false;
 			}
-			cust.reserve(Car.getKey(location), location, carPrice);
 			writeData(id, cust.getKey(), cust);
+			cust.reserve(Car.getKey(location), location, carPrice);
 		}
 		if (Room) {
 			array = new ArrayList<Object>();
@@ -655,12 +656,13 @@ public class MwImpl extends Thread implements Mw {
 			if (roomPrice == -1) {
 				return false;
 			}
-			cust.reserve(Hotel.getKey(location), location, roomPrice);
 			writeData(id, cust.getKey(), cust);
+			cust.reserve(Hotel.getKey(location), location, roomPrice);
 		}
 		Iterator iterator = flightNumbers.iterator();
 		int flightPrice;
-		while (iterator.hasNext()) {
+		while (iterator.hasNext()) 
+		{
 			int flightNum = Integer.parseInt(iterator.next().toString());
 			array = new ArrayList<Object>();
 			String method = "reserveItemHelper";
@@ -676,9 +678,8 @@ public class MwImpl extends Thread implements Mw {
 			if (flightPrice == -1) {
 				return false;
 			}
-			cust.reserve(Flight.getKey(flightNum), String.valueOf(flightNum),
-					flightPrice);
 			writeData(id, cust.getKey(), cust);
+			cust.reserve(Flight.getKey(flightNum), String.valueOf(flightNum), flightPrice);
 		}
 		Trace.info("RM::Reserve Itinerary(" + id + ", " + customer
 				+ ") Succeded");
@@ -742,6 +743,7 @@ public class MwImpl extends Thread implements Mw {
 		if (((String) argument[0]).equals("start")) {
 			int id = TransactionManager.start();
 			myId = id;
+			System.out.println("New transaction started with id: " + myId);
 			ArrayList<Object> array1 = new ArrayList<Object>();
 			array1.add("start");
 			array1.add(myId);
@@ -991,7 +993,9 @@ public class MwImpl extends Thread implements Mw {
 		} 
 		else if (((String) argument[0]).equals("deleteCustomer")) {
 			boolean ret;
-
+			TransactionManager.enlist(myId, "f");
+			TransactionManager.enlist(myId, "c");
+			TransactionManager.enlist(myId, "h");
 			try{
 				ret= deleteCustomer(((Integer) argument[1]).intValue(),
 						((Integer) argument[2]).intValue());}
