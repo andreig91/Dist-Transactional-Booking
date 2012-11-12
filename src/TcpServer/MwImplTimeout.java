@@ -734,6 +734,7 @@ public class MwImplTimeout extends Thread implements Mw {
 	
 			}
 			System.out.println("abort successful.");
+			trxnstarted=false;
 			unlock(myId);
 			return true;
 		}
