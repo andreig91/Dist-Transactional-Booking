@@ -71,27 +71,24 @@ public class ClientTimeout {
 			// decide which of the commands this was
 			
 			try{
-			String str = "bogus";
-			ArrayList<Object> bogus = new ArrayList<Object>();
-			bogus.add(str);
-			oos.writeObject(bogus);
-			Boolean check =is.readBoolean();
-			if(check==false && arguments.size()>=1 &&
-					 !(   
-							(((String)arguments.elementAt(0)).equalsIgnoreCase("start"))   ||
-							(((String)arguments.elementAt(0)).equalsIgnoreCase("quit")) ||
-							(((String)arguments.elementAt(0)).equalsIgnoreCase("shutdown"))
-					   )
-			  )
-			{
-				System.out.println("there is no active transaction");
-				continue;
-			}
-			}catch(Exception e){}
+				String str = "bogus";
+				ArrayList<Object> bogus = new ArrayList<Object>();
+				bogus.add(str);
+				oos.writeObject(bogus);
+				Boolean check =is.readBoolean();
+				if(check==false && arguments.size()>=1 &&
+						 !(   
+								(((String)arguments.elementAt(0)).equalsIgnoreCase("start"))   ||
+								(((String)arguments.elementAt(0)).equalsIgnoreCase("quit")) ||
+								(((String)arguments.elementAt(0)).equalsIgnoreCase("shutdown"))
+						   )
+				  )
+				{
+					System.out.println("there is no active transaction");
+					continue;
+				}
+				}catch(Exception e){}
 
-			
-			
-			
 			switch (obj.findChoice((String) arguments.elementAt(0))) {
 			case 1: // help section
 				if (arguments.size() == 1) // command was "help"
@@ -813,18 +810,33 @@ public class ClientTimeout {
 						deadLock();
 						continue;
 					}
-					if (is.readBoolean()) {
+					if (is.readBoolean()) 
+					{
 						System.out.println("Itinerary Reserved");
-					} else {
-						System.out.println("Itinerary could not be reserved");
-						ArrayList<Object> array1 = new ArrayList<Object>();
-						String start = "abort";
-						array1.add(start);
-						oos.writeObject(array1);
-						if (is.readBoolean()) {
-							System.out.println("aborted because itinerary failed");
-						} else {
-							System.out.println("itinerary failed, aborting failed");
+					} 
+					else 
+					{
+						try
+						{
+							System.out.println("Itinerary could not be reserved");
+							ArrayList<Object> array1 = new ArrayList<Object>();
+							String start = "abort";
+							array1.add(start);
+							oos.writeObject(array1);
+							if (is.readBoolean()) 
+							{
+								System.out.println("ABORTING because itinerary failed");
+							} 
+							else 
+							{
+								System.out.println("itinerary failed, aborting failed");
+							}
+						}
+						catch (Exception e) 
+						{
+							System.out.println("EXCEPTION:");
+							System.out.println(e.getMessage());
+							e.printStackTrace();
 						}
 					}
 
@@ -1006,6 +1018,7 @@ public class ClientTimeout {
 				{
 					System.err.println("IOException: " + e);
 				}
+				break;
 				
 				default:
 					System.out
@@ -1015,9 +1028,9 @@ public class ClientTimeout {
 			}// end of while(true)
 		}
 	
-	public static void deadLock(){
-		System.out.println("deadlock detected..aborting");
-		
+	public static void deadLock()
+	{
+		System.out.println("Deadlock detected\n Transaction was ABORTED!");	
 	}
 
 		public Vector parse(String command) {

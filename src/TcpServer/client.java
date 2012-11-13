@@ -69,6 +69,26 @@ public class client {
 			arguments = obj.parse(command);
 			System.out.println("the command entered was " + (String) arguments.elementAt(0));
 			// decide which of the commands this was
+			
+			try{
+				String str = "bogus";
+				ArrayList<Object> bogus = new ArrayList<Object>();
+				bogus.add(str);
+				oos.writeObject(bogus);
+				Boolean check =is.readBoolean();
+				if(check==false && arguments.size()>=1 &&
+						 !(   
+								(((String)arguments.elementAt(0)).equalsIgnoreCase("start"))   ||
+								(((String)arguments.elementAt(0)).equalsIgnoreCase("quit")) ||
+								(((String)arguments.elementAt(0)).equalsIgnoreCase("shutdown"))
+						   )
+				  )
+				{
+					System.out.println("there is no active transaction");
+					continue;
+				}
+				}catch(Exception e){}
+			
 			switch (obj.findChoice((String) arguments.elementAt(0))) {
 			case 1: // help section
 				if (arguments.size() == 1) // command was "help"
