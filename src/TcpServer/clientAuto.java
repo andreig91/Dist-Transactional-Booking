@@ -66,13 +66,61 @@ public class clientAuto extends Thread {
 			System.exit(0);
 		}
 		
-		String [] commandList = {"newflight"}; 
+		
+		String [] commandList1 = {"newcustomer"}; //1 parameter
+		String [] commandList2 = {"queryflight", "querycar", "queryroom", "newcustomerid",
+				"deleteflight", "deletecar", "deleteroom", "deletecustomer", 
+				"queryflightprice", "querycarprice", "queryroomprice", "querycustomer"}; //2 parameters
+		String [] commandList3 = {"reserveflight", "reserveroom", "reservecar"}; //3 parameters
+		String [] commandList4 = {"newflight","newcar","newroom"}; //4 parameters
+		String [] commandList5 = {"itinerary"}; //6 parameters
+	
 		int incr = 0;
+		long globaltime = System.currentTimeMillis();
+		long waitTime=1000;
 		
 		while (numberOfTransactions < Integer.parseInt(args[2])) 
 		{
-			String tempstr = "," + Integer.toString(threadNum);
-			String tempstr2 = commandList[incr] + tempstr + tempstr + tempstr + tempstr;
+			if(System.currentTimeMillis()-globaltime > waitTime){
+			try{
+				Thread.sleep(waitTime-(System.currentTimeMillis()-globaltime));}
+			catch(Exception e){}
+			}
+			globaltime = System.currentTimeMillis();
+			
+			String tempstr2 = "";
+		//	String tempstr2 = commandList4[incr] + tempstr + tempstr + tempstr + tempstr;
+			
+			Random rand = new Random();
+			int randNumber = rand.nextInt(19);
+			
+			if(randNumber == 0){ //1 parameter
+				tempstr2 = tempstr2 + commandList1[randNumber%1];
+				tempstr2= tempstr2 + "," + Integer.toString(threadNum);
+				
+			}
+			else if(randNumber >0 && randNumber < 13){ //2 parameters
+				tempstr2 = tempstr2 + commandList2[randNumber%12];
+				for( int k = 0; k < 2;k++)
+					tempstr2 = tempstr2 + "," + Integer.toString(threadNum);
+			}
+			else if(randNumber >= 13 && randNumber < 16){ //3 parameters
+				tempstr2 = tempstr2 + commandList3[randNumber%3];
+				for( int k = 0; k < 3;k++)
+					tempstr2 = tempstr2 + "," + Integer.toString(threadNum);
+			}
+			else if(randNumber >=16 && randNumber < 19){ //4 parameters
+				tempstr2 = tempstr2 + commandList4[randNumber%3];
+				for( int k = 0; k < 4;k++)
+					tempstr2 = tempstr2 + "," + Integer.toString(threadNum);
+				
+			}
+			else if(randNumber ==19){  //6 parameters
+				tempstr2 = tempstr2 + commandList5[randNumber%1];
+				for( int k = 0; k < 6;k++)
+					tempstr2 = tempstr2 + "," + Integer.toString(threadNum);
+			}
+			
 			command = tempstr2;
 			incr++;
 			//System.out.println(command);
@@ -178,6 +226,9 @@ public class clientAuto extends Thread {
 						System.out.println("Newflight response time: " + responseTime + "ms");
 					} else {
 						System.out.println("Flights could not be added");
+						long responseTime = (System.currentTimeMillis() - time1);
+						totalResponseTime += responseTime;
+						System.out.println("Newflight response time: " + responseTime + "ms");
 					}
 				} catch (Exception e) {
 					System.out.println("EXCEPTION:");
@@ -222,6 +273,9 @@ public class clientAuto extends Thread {
 						System.out.println("Newcar response time: " + responseTime + "ms");
 					} else {
 						System.out.println("Cars could not be added");
+						long responseTime = (System.currentTimeMillis() - time1);
+						totalResponseTime += responseTime;
+						System.out.println("Newcar response time: " + responseTime + "ms");
 					}
 
 				} catch (Exception e) {
@@ -267,6 +321,10 @@ public class clientAuto extends Thread {
 						System.out.println("Newroom response time: " + responseTime + "ms");
 					} else {
 						System.out.println("Rooms could not be added");
+						long responseTime = (System.currentTimeMillis() - time1);
+						totalResponseTime += responseTime;
+						System.out.println("Newroom response time: " + responseTime + "ms");
+						
 					}
 				} catch (Exception e) {
 					System.out.println("EXCEPTION:");
@@ -290,12 +348,16 @@ public class clientAuto extends Thread {
 					ArrayList<Object> array = new ArrayList<Object>();
 					array.add(method);
 					array.add(Id);
+					long time1 = System.currentTimeMillis();
 					oos.writeObject(array);
 					if(!is.readBoolean()){
 						deadLock();
 						continue;
 					}
-
+					
+					long responseTime = (System.currentTimeMillis() - time1);
+					totalResponseTime += responseTime;
+					System.out.println("Newcustomer response time: " + responseTime + "ms");
 					System.out.println("new customer id: " + is.readInt());
 
 				} catch (Exception e) {
@@ -324,6 +386,7 @@ public class clientAuto extends Thread {
 					array.add(method);
 					array.add(Id);
 					array.add(flightNum);
+					long time1 = System.currentTimeMillis();
 					oos.writeObject(array);
 					
 					if(!is.readBoolean()){
@@ -333,9 +396,12 @@ public class clientAuto extends Thread {
 					
 					if (is.readBoolean()) {
 						System.out.println("Flight deleted");
+						
 					} else {
 						System.out.println("Flight could not be deleted");
 					}
+					long responseTime = (System.currentTimeMillis() - time1);
+					totalResponseTime += responseTime;
 				} catch (Exception e) {
 					System.out.println("EXCEPTION:");
 					System.out.println(e.getMessage());
@@ -363,6 +429,7 @@ public class clientAuto extends Thread {
 					array.add(method);
 					array.add(Id);
 					array.add(location);
+					long time1 = System.currentTimeMillis();
 					oos.writeObject(array);
 					if(!is.readBoolean()){
 						deadLock();
@@ -373,6 +440,8 @@ public class clientAuto extends Thread {
 					} else {
 						System.out.println("Cars could not be deleted");
 					}
+					long responseTime = (System.currentTimeMillis() - time1);
+					totalResponseTime += responseTime;
 				} catch (Exception e) {
 					System.out.println("EXCEPTION:");
 					System.out.println(e.getMessage());
@@ -400,6 +469,7 @@ public class clientAuto extends Thread {
 					array.add(method);
 					array.add(Id);
 					array.add(location);
+					long time1 = System.currentTimeMillis();
 					oos.writeObject(array);
 					if(!is.readBoolean()){
 						deadLock();
@@ -410,6 +480,8 @@ public class clientAuto extends Thread {
 					} else {
 						System.out.println("Rooms could not be deleted");
 					}
+					long responseTime = (System.currentTimeMillis() - time1);
+					totalResponseTime += responseTime;
 				} catch (Exception e) {
 					System.out.println("EXCEPTION:");
 					System.out.println(e.getMessage());
@@ -437,6 +509,7 @@ public class clientAuto extends Thread {
 					array.add(method);
 					array.add(Id);
 					array.add(customer);
+					long time1 = System.currentTimeMillis();
 					oos.writeObject(array);
 					
 					if(!is.readBoolean()){
@@ -448,7 +521,8 @@ public class clientAuto extends Thread {
 						System.out.println("Customer Deleted");
 					} else
 						System.out.println("Customer could not be deleted");
-
+					long responseTime = (System.currentTimeMillis() - time1);
+					totalResponseTime += responseTime;
 				} catch (Exception e) {
 					System.out.println("EXCEPTION:");
 					System.out.println(e.getMessage());
@@ -475,6 +549,7 @@ public class clientAuto extends Thread {
 					array.add(method);
 					array.add(Id);
 					array.add(flightNum);
+					long time1 = System.currentTimeMillis();
 					oos.writeObject(array);
 
 					if(!is.readBoolean()){
@@ -484,7 +559,8 @@ public class clientAuto extends Thread {
 					
 					System.out.println("Number of seats available: "
 							+ is.readInt());
-
+					long responseTime = (System.currentTimeMillis() - time1);
+					totalResponseTime += responseTime;
 				} catch (Exception e) {
 					System.out.println("EXCEPTION:");
 					System.out.println(e.getMessage());
@@ -510,6 +586,7 @@ public class clientAuto extends Thread {
 					array.add(method);
 					array.add(Id);
 					array.add(location);
+					long time1 = System.currentTimeMillis();
 					oos.writeObject(array);
 					if(!is.readBoolean()){
 						deadLock();
@@ -518,7 +595,8 @@ public class clientAuto extends Thread {
 
 					System.out.println("number of Cars at this location: "
 							+ is.readInt());
-
+					long responseTime = (System.currentTimeMillis() - time1);
+					totalResponseTime += responseTime;
 				} catch (Exception e) {
 					System.out.println("EXCEPTION:");
 					System.out.println(e.getMessage());
@@ -545,6 +623,7 @@ public class clientAuto extends Thread {
 					array.add(method);
 					array.add(Id);
 					array.add(location);
+					long time1 = System.currentTimeMillis();
 					oos.writeObject(array);
 					if(!is.readBoolean()){
 						deadLock();
@@ -553,7 +632,8 @@ public class clientAuto extends Thread {
 
 					System.out.println("number of Rooms at this location: "
 							+ is.readInt());
-
+					long responseTime = (System.currentTimeMillis() - time1);
+					totalResponseTime += responseTime;
 				} catch (Exception e) {
 					System.out.println("EXCEPTION:");
 					System.out.println(e.getMessage());
@@ -580,6 +660,7 @@ public class clientAuto extends Thread {
 					array.add(method);
 					array.add(Id);
 					array.add(customer);
+					long time1 = System.currentTimeMillis();
 					oos.writeObject(array);
 					
 					if(!is.readBoolean()){
@@ -589,6 +670,8 @@ public class clientAuto extends Thread {
 					
 					System.out.println("Customer info:"
 							+ (String) iis.readObject());
+					long responseTime = (System.currentTimeMillis() - time1);
+					totalResponseTime += responseTime;
 				} catch (Exception e) {
 					System.out.println("EXCEPTION:");
 					System.out.println(e.getMessage());
@@ -615,14 +698,16 @@ public class clientAuto extends Thread {
 					array.add(method);
 					array.add(Id);
 					array.add(flightNum);
+					long time1 = System.currentTimeMillis();
 					oos.writeObject(array);
 					if(!is.readBoolean()){
 						deadLock();
 						continue;
 					}
-
+					
 					System.out.println("Price of a seat: " + is.readInt());
-
+					long responseTime = (System.currentTimeMillis() - time1);
+					totalResponseTime += responseTime;
 				} catch (Exception e) {
 					System.out.println("EXCEPTION:");
 					System.out.println(e.getMessage());
@@ -649,6 +734,7 @@ public class clientAuto extends Thread {
 					array.add(method);
 					array.add(Id);
 					array.add(location);
+					long time1 = System.currentTimeMillis();
 					oos.writeObject(array);
 					if(!is.readBoolean()){
 						deadLock();
@@ -657,7 +743,8 @@ public class clientAuto extends Thread {
 
 					System.out.println("Price of a car at this location: "
 							+ is.readInt());
-
+					long responseTime = (System.currentTimeMillis() - time1);
+					totalResponseTime += responseTime;
 				} catch (Exception e) {
 					System.out.println("EXCEPTION:");
 					System.out.println(e.getMessage());
@@ -684,6 +771,7 @@ public class clientAuto extends Thread {
 					array.add(method);
 					array.add(Id);
 					array.add(location);
+					long time1 = System.currentTimeMillis();
 					oos.writeObject(array);
 					if(!is.readBoolean()){
 						deadLock();
@@ -692,7 +780,8 @@ public class clientAuto extends Thread {
 
 					System.out.println("Price of Rooms at this location: "
 							+ is.readInt());
-
+					long responseTime = (System.currentTimeMillis() - time1);
+					totalResponseTime += responseTime;
 				} catch (Exception e) {
 					System.out.println("EXCEPTION:");
 					System.out.println(e.getMessage());
@@ -719,6 +808,7 @@ public class clientAuto extends Thread {
 					array.add(Id);
 					array.add(customer);
 					array.add(flightNum);
+					long time1 = System.currentTimeMillis();
 					oos.writeObject(array);
 					
 					if(!is.readBoolean()){
@@ -731,6 +821,8 @@ public class clientAuto extends Thread {
 					} else {
 						System.out.println("Flight could not be reserved");
 					}
+					long responseTime = (System.currentTimeMillis() - time1);
+					totalResponseTime += responseTime;
 				} catch (Exception e) {
 					System.out.println("EXCEPTION:");
 					System.out.println(e.getMessage());
@@ -758,6 +850,7 @@ public class clientAuto extends Thread {
 					array.add(Id);
 					array.add(customer);
 					array.add(location);
+					long time1 = System.currentTimeMillis();
 					oos.writeObject(array);
 					if(!is.readBoolean()){
 						deadLock();
@@ -768,6 +861,8 @@ public class clientAuto extends Thread {
 					} else {
 						System.out.println("Car could not be reserved");
 					}
+					long responseTime = (System.currentTimeMillis() - time1);
+					totalResponseTime += responseTime;
 				} catch (Exception e) {
 					System.out.println("EXCEPTION:");
 					System.out.println(e.getMessage());
@@ -795,6 +890,7 @@ public class clientAuto extends Thread {
 					array.add(Id);
 					array.add(customer);
 					array.add(location);
+					long time1 = System.currentTimeMillis();
 					oos.writeObject(array);
 					if(!is.readBoolean()){
 						deadLock();
@@ -805,6 +901,8 @@ public class clientAuto extends Thread {
 					} else {
 						System.out.println("Room could not be reserved");
 					}
+					long responseTime = (System.currentTimeMillis() - time1);
+					totalResponseTime += responseTime;
 				} catch (Exception e) {
 					System.out.println("EXCEPTION:");
 					System.out.println(e.getMessage());
@@ -936,6 +1034,7 @@ public class clientAuto extends Thread {
 					array.add(method);
 					array.add(Id);
 					array.add(Cid);
+					long time1 = System.currentTimeMillis();
 					oos.writeObject(array);
 					if(!is.readBoolean()){
 						deadLock();
@@ -946,6 +1045,8 @@ public class clientAuto extends Thread {
 					} else {
 						System.out.println("Customer could not be created");
 					}
+					long responseTime = (System.currentTimeMillis() - time1);
+					totalResponseTime += responseTime;
 
 				} catch (Exception e) {
 					System.out.println("EXCEPTION:");
