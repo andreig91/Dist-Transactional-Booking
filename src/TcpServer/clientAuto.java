@@ -67,25 +67,28 @@ public class clientAuto extends Thread {
 		}
 		
 		String [] commandList = {"newflight"}; 
+		int incr = 0;
 		
 		while (numberOfTransactions < Integer.parseInt(args[2])) 
 		{
 			String tempstr = "," + Integer.toString(threadNum);
-			String tempstr2 = commandList[0] + tempstr + tempstr + tempstr + tempstr;
+			String tempstr2 = commandList[incr] + tempstr + tempstr + tempstr + tempstr;
 			command = tempstr2;
-			
-			System.out.println(command);
+			incr++;
+			//System.out.println(command);
 				
 			if(numberOfTransactions % 5 == 0)
 			{
 				command = "start";
 				totalResponseTime = 0;
+				incr = 0;
 			}
 			if((numberOfTransactions + 1) % 5 == 0)
 			{
 				command = "commit";
 				System.out.println("average response time: " + totalResponseTime/(long)(3) + "ms");
 				totalAverage += totalResponseTime/(long)(3);
+				incr = 0;
 			}
 			if(numberOfTransactions == Integer.parseInt(args[2]) - 1)
 			{
@@ -93,6 +96,7 @@ public class clientAuto extends Thread {
 				long totAvgRespTime = totalAverage/(long)(Integer.parseInt(args[2]) / 5);
 				System.out.println("--\n--\n--\n--\n--\n--\n--\n--\n--\n--\n--\n--\n TOTAL AVG RESPONSE TIME: " + totAvgRespTime + "ms");
 				clientC.incrRespTime(totAvgRespTime);
+				incr = 0;
 			}
 			numberOfTransactions++;
 			// remove heading and trailing white space
