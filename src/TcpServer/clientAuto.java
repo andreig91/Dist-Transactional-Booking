@@ -92,6 +92,7 @@ public class clientAuto extends Thread {
 				command = "commit";
 				long totAvgRespTime = totalAverage/(long)(Integer.parseInt(args[2]) / 5);
 				System.out.println("--\n--\n--\n--\n--\n--\n--\n--\n--\n--\n--\n--\n TOTAL AVG RESPONSE TIME: " + totAvgRespTime + "ms");
+				clientC.incrRespTime(totAvgRespTime);
 			}
 			numberOfTransactions++;
 			// remove heading and trailing white space
