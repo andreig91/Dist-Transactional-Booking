@@ -7,5 +7,5 @@ rm -f *.class
 cd ..
 javac TcpServer/RmServer.java
 javac TcpServer/MwServer.java
+javac TcpServer/clientC.java
 javac TcpServer/client.java
-javac TcpServer/clientAuto.java
