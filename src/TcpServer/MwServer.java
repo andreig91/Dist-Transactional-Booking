@@ -46,7 +46,7 @@ public class MwServer {
 		while (true) {
 			try {
 				clientSocket = serverSocket.accept();
-				new MwImpl(clientSocket, rmF, rmFPort, rmC, rmCPort, rmH,
+				new MwImplTimeout(clientSocket, rmF, rmFPort, rmC, rmCPort, rmH,
 						rmHPort).start();
 			} catch (IOException e) {
 				System.out.println(e);

@@ -8,3 +8,4 @@ cd ..
 javac TcpServer/RmServer.java
 javac TcpServer/MwServer.java
 javac TcpServer/client.java
+javac TcpServer/clientAuto.java
